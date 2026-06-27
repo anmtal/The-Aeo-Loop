@@ -151,7 +151,7 @@ async function callAnthropic(key, sys, user) {
 
 async function callGemini(key, sys, user) {
   const r = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(key)}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -172,7 +172,7 @@ async function callGrok(key, sys, user) {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
     body: JSON.stringify({
-      model: "grok-2-latest",
+      model: "grok-3",
       messages: [{ role: "system", content: sys }, { role: "user", content: user }],
       max_tokens: 300, temperature: 0.2,
     }),
@@ -267,6 +267,36 @@ function summarise(results, input) {
 }
 
 module.exports = async function handler(req, res) {
+  // ---- Diagnostics: GET /api/scan returns per-engine health with NO secrets.
+  // Reports only whether each key is present and the live call's status/error.
+  if (req.method === "GET") {
+    const sampleInput = { company: "Test Co", website: "test.com", area: "plumbing", city: "Austin" };
+    const userPrompt = "Best plumbing companies in Austin";
+    const diagnostics = await Promise.all(
+      ENGINES.map(async (eng) => {
+        const key = process.env[eng.env];
+        if (!key) return { engine: eng.key, keyPresent: false, ok: false, note: "no key set in env" };
+        try {
+          const sys = systemPrompt(eng.name, eng.vendor, sampleInput, userPrompt);
+          const raw = await eng.call(key, sys, userPrompt);
+          const parsed = normalise(raw, eng, sampleInput);
+          return { engine: eng.key, keyPresent: true, ok: !!parsed, parsedOk: !!parsed, sample: String(raw).slice(0, 90) };
+        } catch (e) {
+          return { engine: eng.key, keyPresent: true, ok: false, error: String((e && e.message) || e).slice(0, 140) };
+        }
+      })
+    );
+    res.status(200).json({
+      ok: true,
+      node: process.version,
+      hasFetch: typeof fetch === "function",
+      webhookUrlSet: !!process.env.SHEET_WEBHOOK_URL,
+      webhookSecretSet: !!process.env.SHEET_WEBHOOK_SECRET,
+      diagnostics,
+    });
+    return;
+  }
+
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
