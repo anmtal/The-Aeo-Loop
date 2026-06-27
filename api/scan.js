@@ -150,21 +150,32 @@ async function callAnthropic(key, sys, user) {
 }
 
 async function callGemini(key, sys, user) {
-  const r = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: sys }] },
-        contents: [{ role: "user", parts: [{ text: user }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 300, responseMimeType: "application/json" },
-      }),
+  // Try current flash model names in order; a 404 means that name isn't
+  // available on this key, so fall through to the next. Stop on any other
+  // status (401/403/429) since another model name won't fix those.
+  const models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
+  let lastStatus = 0;
+  for (let i = 0; i < models.length; i++) {
+    const r = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${models[i]}:generateContent?key=${encodeURIComponent(key)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: sys }] },
+          contents: [{ role: "user", parts: [{ text: user }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 300, responseMimeType: "application/json" },
+        }),
+      }
+    );
+    if (r.ok) {
+      const j = await r.json();
+      return j.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") || "";
     }
-  );
-  if (!r.ok) throw new Error("gemini " + r.status);
-  const j = await r.json();
-  return j.candidates?.[0]?.content?.parts?.map((p) => p.text || "").join("") || "";
+    lastStatus = r.status;
+    if (r.status !== 404) break;
+  }
+  throw new Error("gemini " + lastStatus);
 }
 
 async function callGrok(key, sys, user) {
