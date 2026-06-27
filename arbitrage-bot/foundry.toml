@@ -1,0 +1,18 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.26"
+optimizer = true
+optimizer_runs = 1_000_000   # bot calls a hot path repeatedly -> optimize for runtime gas, not deploy size
+via_ir = true                # better optimization of the swap loop
+evm_version = "cancun"
+
+# Fork tests pull live mainnet state; set ETH_RPC_URL in your environment.
+[rpc_endpoints]
+mainnet = "${ETH_RPC_URL}"
+
+[fmt]
+line_length = 100
+tab_width = 4
+bracket_spacing = true
