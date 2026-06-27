@@ -287,16 +287,18 @@ p { margin: 0; }
 .billing-toggle__opt.is-active .billing-toggle__save { background: rgba(4,19,14,.18); color: #04130E; }
 .tier__save { font-family: var(--mono); font-size: 11.5px; color: var(--accent-br); margin: -2px 0 2px; letter-spacing: .02em; }
 
-.tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; align-items: start; }
+.tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; align-items: stretch; }
 @media (max-width: 1080px) { .tiers { grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 760px; margin-inline: auto; } }
 @media (max-width: 560px) { .tiers { grid-template-columns: 1fr; max-width: 440px; } }
-.tier { background: var(--card); border: 1px solid var(--card-line); border-radius: var(--r); padding: 28px 22px; position: relative; box-shadow: var(--shadow); transition: transform .2s ease, border-color .2s ease; }
+.tier { background: var(--card); border: 1px solid var(--card-line); border-radius: var(--r); padding: 28px 22px; position: relative; box-shadow: var(--shadow); transition: transform .2s ease, border-color .2s ease; display: flex; flex-direction: column; }
+.tier .btn { margin-top: auto; }
 .tier:hover { transform: translateY(-3px); }
 .tier--hero { border-color: color-mix(in srgb, var(--accent) 60%, transparent); box-shadow: var(--glow); }
 .tier__flag { position: absolute; top: -12px; left: 26px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #04130E; padding: 5px 12px; border-radius: 999px; }
 .tier__name { font-family: var(--mono); font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); }
 .tier__price { font-family: var(--display); font-weight: 800; font-size: 2.5rem; letter-spacing: -.02em; margin: 10px 0 2px; }
 .tier__price span { font-size: 1rem; font-weight: 600; color: var(--text-2); font-family: var(--body); }
+.tier__price span[data-price] { font-size: inherit; font-weight: inherit; color: inherit; font-family: inherit; letter-spacing: inherit; }
 .tier__role { font-size: 14.5px; color: var(--text-2); min-height: 42px; }
 .tier ul { list-style: none; padding: 0; margin: 20px 0 26px; display: grid; gap: 11px; }
 .tier li { font-size: 14.5px; padding-left: 26px; position: relative; }
