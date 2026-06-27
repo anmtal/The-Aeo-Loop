@@ -22,8 +22,7 @@
   <div class="wrap nav__inner">
     <a class="brand" href="index.html" aria-label="The AEO Loop home">
       <svg class="brand__glyph" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M16 6a10 10 0 1 0 9.6 12.8" fill="none" stroke="#0E9F77" stroke-width="2.8" stroke-linecap="round"/>
-        <path d="M23.5 11.5 26 18l-6.6 1.6" fill="none" stroke="#0E9F77" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M26 16 A10 10 0 1 1 15 6" fill="none" stroke="#1AD6A0" stroke-width="2.6" stroke-linecap="round"/><path d="M14.6 3.4 19.4 6 14.6 8.6Z" fill="#1AD6A0"/>
       </svg>
       The AEO&nbsp;Loop
     </a>
@@ -34,7 +33,7 @@
       <a href="contact.html">Contact</a>
     </nav>
     <div class="nav__cta">
-      <a class="btn btn--primary" href="scanner.html">Run free scan</a>
+      <a class="btn btn--primary" href="#scan-start">Run free scan</a>
     </div>
     <button class="nav__toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
@@ -43,32 +42,128 @@
 <main id="main">
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" id="scan-start">
     <div class="wrap hero__grid">
       <div>
-        <span class="eyebrow">Managed AI recommendation &amp; visibility</span>
+        <span class="eyebrow">Managed AEO &amp; AI visibility system</span>
         <h1>Find out why AI recommends your <span class="em">competitors</span> instead of you.</h1>
-        <p class="hero__sub lede">Buyers ask ChatGPT, Gemini, Grok and Claude who to hire. If those answers name your competitors and skip you, you never knew the conversation happened. The scanner shows you — for free, with real queries.</p>
+        <p class="hero__sub lede">Your buyers now ask ChatGPT, Gemini, Grok, and Claude who to hire. When those answers name competitors and leave you out, the decision is made before you ever enter it. Run the scanner — real queries against four live engines, no synthetic scores.</p>
         <div class="hero__cta">
-          <a class="btn btn--primary btn--lg" href="scanner.html">Run my free scan <span class="arr">→</span></a>
-          <a class="btn btn--ghost btn--lg" href="method.html">See how it works</a>
+          <a class="btn btn--ghost btn--lg" href="method.html">See how the method works <span class="arr">→</span></a>
         </div>
         <div class="hero__trust">
           <span class="dot" aria-hidden="true"></span>
           <span>Real calls to <b>4 live engines</b></span><span aria-hidden="true">·</span>
           <span>No synthetic scores</span><span aria-hidden="true">·</span>
-          <span>Founder-reviewed report</span>
+          <span>Founder-reviewed Gap Report</span>
         </div>
       </div>
 
-      <!-- SIGNATURE: live engine verdict panel -->
-      <div class="scanpanel" data-hero-panel aria-label="Sample scan result">
-        <div class="scanpanel__bar">
-          <span class="scanpanel__title"><span class="dot" aria-hidden="true"></span> live scan · "best family law firms in Toronto"</span>
-          <span class="scanpanel__score">overall <b data-hero-score>0</b>/100</span>
+      <!-- LIVE SCANNER -->
+      <div>
+        <form class="scanform" data-scan-form novalidate aria-label="AI visibility scanner">
+          <div class="scanpanel__bar" style="border:0;padding:0 2px 18px">
+            <span class="scanpanel__title"><span class="dot" aria-hidden="true"></span> Free AI Visibility Scan</span>
+            <span class="scanpanel__score">~60 seconds</span>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-company">Company name</label>
+              <input id="f-company" name="company" type="text" autocomplete="organization" placeholder="Acme Family Law">
+              <div class="err" role="alert"></div>
+            </div>
+            <div class="field">
+              <label for="f-website">Company website</label>
+              <input id="f-website" name="website" type="text" inputmode="url" autocomplete="url" placeholder="acmefamilylaw.com">
+              <div class="err" role="alert"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-name">Full name</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" placeholder="Jordan Reyes">
+              <div class="err" role="alert"></div>
+            </div>
+            <div class="field">
+              <label for="f-email">Professional email</label>
+              <input id="f-email" name="email" type="email" autocomplete="email" placeholder="jordan@acmefamilylaw.com">
+              <div class="err" role="alert"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-city">City &amp; region</label>
+              <input id="f-city" name="city" type="text" placeholder="Toronto, Ontario">
+              <div class="err" role="alert"></div>
+            </div>
+            <div class="field">
+              <label for="f-area">Area of operation <span class="hint">be specific</span></label>
+              <input id="f-area" name="area" type="text" placeholder="family law">
+              <div class="err" role="alert"></div>
+            </div>
+          </div>
+          <button class="btn btn--primary btn--lg" type="submit" data-submit style="width:100%;justify-content:center;margin-top:6px">
+            <span data-label>Run my free scan</span> <span class="arr">→</span>
+          </button>
+          <p class="consent">By running a scan you agree to receive your Gap Report at the email provided. One report, one follow-up — no spam.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS (render in place) -->
+  <section class="section section--paper">
+    <div class="wrap">
+      <div class="results" data-results aria-live="polite">
+        <div class="section-head" style="margin-bottom:24px">
+          <span class="eyebrow">Your verdicts</span>
+          <h2 class="h-md" style="margin-top:12px">Cross-engine visibility for <span data-company-label>your business</span></h2>
         </div>
-        <div data-cards></div>
-        <p class="scanpanel__score" style="padding:12px 6px 2px">Sample result. Run the scanner on your own business to see your verdicts.</p>
+
+        <div class="demo-flag" data-demo-flag style="display:none;margin-bottom:18px">
+          <span aria-hidden="true">●</span>
+          <span><b>Demo mode.</b> These verdicts are illustrative. Once the four engine API keys are set, scans run live against real responses.</span>
+        </div>
+
+        <div class="summary">
+          <svg class="scorering" viewBox="0 0 132 132" data-ring aria-hidden="true"></svg>
+          <div class="summary__meta">
+            <div class="big">Overall visibility <span data-overall>—</span></div>
+            <div class="row">Recommended on <b data-rec>0</b> engines · Excluded on <b data-exc>0</b></div>
+            <div class="row">Most surfaced competitor: <b data-comp>—</b></div>
+            <div class="row">Primary gap: <b data-gap>—</b></div>
+          </div>
+        </div>
+
+        <div class="scanpanel" style="background:var(--ink);">
+          <div class="scanpanel__bar">
+            <span class="scanpanel__title"><span class="dot" aria-hidden="true"></span> per-engine classification</span>
+            <span class="scanpanel__score">4 engines</span>
+          </div>
+          <div data-cards></div>
+        </div>
+
+        <div class="gate">
+          <h3>Your full Gap Report is on its way.</h3>
+          <p>The scanner shows scores and verdicts. The complete 11-section Gap Report — competitor comparison, prompt intent matrix, and a prioritised fix plan — is generated by a three-pass AI system, reviewed personally by the founder, and emailed within 24–48 hours.</p>
+          <div class="hero__cta" style="justify-content:center;margin-top:22px">
+            <a class="btn btn--primary" href="contact.html">Talk through my results <span class="arr">→</span></a>
+            <a class="btn btn--ghost" href="pricing.html">See how we fix it</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- shown before any scan -->
+      <div class="reveal" data-pre>
+        <div class="section-head center" style="margin-bottom:30px">
+          <span class="eyebrow" style="justify-content:center">What you get back</span>
+          <h2 class="h-md" style="margin-top:12px">A defensible verdict for every engine — instantly.</h2>
+        </div>
+        <div class="grid grid--3">
+          <div class="card"><div class="card__n">Recommended → Excluded</div><h3 style="font-size:1.05rem;margin-top:8px">Five states</h3><p>Every engine result lands in exactly one classification, by written rule.</p></div>
+          <div class="card"><div class="card__n">0–100</div><h3 style="font-size:1.05rem;margin-top:8px">Defensible score</h3><p>Each score derives from the classification — traceable, not a vibe.</p></div>
+          <div class="card"><div class="card__n">6 categories</div><h3 style="font-size:1.05rem;margin-top:8px">One gap, one fix</h3><p>Your biggest blocker, mapped to the work that closes it.</p></div>
+        </div>
       </div>
     </div>
   </section>
@@ -136,7 +231,7 @@
     <div class="wrap">
       <div class="section-head reveal">
         <span class="eyebrow">Free scanner → Gap Report</span>
-        <h2 class="h-lg">The scan creates the pain. The report proves we can solve it.</h2>
+        <h2 class="h-lg">The scan reveals the gap. The Gap Report shows how to close it.</h2>
         <p class="lede">You see your scores, verdicts and the competitors surfaced instantly. The full Gap Report — an 11-section diagnosis — is generated by a three-pass AI system, reviewed by the founder, and emailed to you within 24–48 hours.</p>
       </div>
       <div class="stats reveal">
@@ -153,7 +248,7 @@
     <div class="wrap">
       <div class="section-head center reveal">
         <span class="eyebrow">Engagements</span>
-        <h2 class="h-lg">One setup. Two retainers. Built for solo delivery.</h2>
+        <h2 class="h-lg">One setup. Two retainers. Built for senior service firms.</h2>
         <p class="lede">A single new client, matter or patient justifies the monthly fee — which is why this works for law, finance, healthcare and high-value B2B.</p>
       </div>
       <div class="tiers reveal">
@@ -191,7 +286,7 @@
         <h2 class="h-lg">See your verdict across every major engine.</h2>
         <p>It takes one minute and four real queries. You'll see your scores, who's being recommended instead of you, and your biggest gap — before you ever talk to us.</p>
         <div class="hero__cta">
-          <a class="btn btn--primary btn--lg" href="scanner.html">Run my free scan <span class="arr">→</span></a>
+          <a class="btn btn--primary btn--lg" href="#scan-start">Run my free scan <span class="arr">→</span></a>
           <a class="btn btn--ghost btn--lg" href="contact.html">Talk to the founder</a>
         </div>
       </div>
@@ -206,8 +301,7 @@
       <div>
         <div class="footer__brand">
           <svg class="brand__glyph" viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M16 6a10 10 0 1 0 9.6 12.8" fill="none" stroke="#0E9F77" stroke-width="2.8" stroke-linecap="round"/>
-            <path d="M23.5 11.5 26 18l-6.6 1.6" fill="none" stroke="#0E9F77" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M26 16 A10 10 0 1 1 15 6" fill="none" stroke="#1AD6A0" stroke-width="2.6" stroke-linecap="round"/><path d="M14.6 3.4 19.4 6 14.6 8.6Z" fill="#1AD6A0"/>
           </svg>
           The AEO Loop
         </div>
