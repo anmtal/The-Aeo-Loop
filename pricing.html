@@ -40,6 +40,13 @@
         <p class="lede" style="margin-top:18px">Start with the free scanner and Gap Report. When you're ready to fix what it surfaces, pick a one-time setup or an ongoing loop. Scope is defined upfront and doesn't drift.</p>
       </div>
 
+      <div class="center reveal" style="margin-bottom:clamp(28px,4vw,40px)">
+        <div class="billing-toggle" role="group" aria-label="Billing period">
+          <button type="button" class="billing-toggle__opt is-active" data-billing="monthly" aria-pressed="true">Monthly</button>
+          <button type="button" class="billing-toggle__opt" data-billing="annual" aria-pressed="false">Annual <span class="billing-toggle__save">save 10%</span></button>
+        </div>
+      </div>
+
       <div class="tiers reveal">
         <div class="tier">
           <div class="tier__name">Implementation</div>
@@ -60,7 +67,8 @@
         <div class="tier tier--hero">
           <span class="tier__flag">Hero offer</span>
           <div class="tier__name">Growth</div>
-          <div class="tier__price">$3,499 <span>/month</span></div>
+          <div class="tier__price">$<span data-price data-monthly="3,499" data-annual="3,149">3,499</span> <span data-suffix>/month</span></div>
+          <div class="tier__save" data-save style="display:none">Billed annually · save 10%</div>
           <p class="tier__role">The ongoing AI recommendation system — designed for the majority of clients.</p>
           <ul>
             <li>Up to 15 pages in active scope (rotatable monthly)</li>
@@ -76,7 +84,8 @@
 
         <div class="tier">
           <div class="tier__name">Authority</div>
-          <div class="tier__price">$5,999 <span>/month</span></div>
+          <div class="tier__price">$<span data-price data-monthly="5,999" data-annual="5,399">5,999</span> <span data-suffix>/month</span></div>
+          <div class="tier__save" data-save style="display:none">Billed annually · save 10%</div>
           <p class="tier__role">The expansion tier for broad footprints, multiple service lines, and tough markets.</p>
           <ul>
             <li>Up to 40 pages in active scope</li>
@@ -89,9 +98,22 @@
           </ul>
           <a class="btn btn--ghost" href="contact.html">Scale with Authority</a>
         </div>
-      </div>
 
-      <p class="muted reveal" style="text-align:center;margin-top:26px;font-size:14.5px">Need something larger? <a href="contact.html" style="color:var(--accent-br);font-weight:600">Enterprise</a> is custom-scoped through a paid discovery engagement.</p>
+        <div class="tier">
+          <div class="tier__name">Custom</div>
+          <div class="tier__price">Custom</div>
+          <p class="tier__role">Enterprise scope for multi-location brands, large footprints, or bespoke requirements.</p>
+          <ul>
+            <li>Tailored page &amp; prompt volumes</li>
+            <li>All engines plus custom tracking</li>
+            <li>Bespoke schema architecture</li>
+            <li>Dedicated reporting cadence</li>
+            <li>Priority founder access</li>
+            <li>Scoped via a paid discovery engagement</li>
+          </ul>
+          <a class="btn btn--ghost" href="contact.html">Talk to the founder</a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -105,7 +127,7 @@
       </div>
       <div class="tbl-scroll reveal">
         <table class="feat">
-          <thead><tr><th>&nbsp;</th><th>Growth — $3,499/mo</th><th>Authority — $5,999/mo</th></tr></thead>
+          <thead><tr><th>&nbsp;</th><th>Growth</th><th>Authority</th></tr></thead>
           <tbody>
             <tr><td>Pages in active scope</td><td>Up to 15</td><td>Up to 40</td></tr>
             <tr><td>Tracked prompts</td><td>25</td><td>50</td></tr>
@@ -174,5 +196,29 @@
 </footer>
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 <script src="assets/app.js" defer></script>
+<script>
+/* Monthly / Annual billing toggle (annual = 10% off, shown per-month) */
+(function () {
+  var opts = document.querySelectorAll("[data-billing]");
+  if (!opts.length) return;
+  function set(mode) {
+    opts.forEach(function (o) {
+      var on = o.getAttribute("data-billing") === mode;
+      o.classList.toggle("is-active", on);
+      o.setAttribute("aria-pressed", String(on));
+    });
+    document.querySelectorAll("[data-price]").forEach(function (p) {
+      p.textContent = p.getAttribute(mode === "annual" ? "data-annual" : "data-monthly");
+    });
+    document.querySelectorAll("[data-save]").forEach(function (s) {
+      s.style.display = mode === "annual" ? "block" : "none";
+    });
+  }
+  opts.forEach(function (o) {
+    o.addEventListener("click", function () { set(o.getAttribute("data-billing")); });
+  });
+  set("monthly");
+})();
+</script>
 </body>
 </html>
