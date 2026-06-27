@@ -19,3 +19,6 @@ Thumbs.db
 
 # Claude Code local settings
 .claude/
+
+# Unrelated local project that lives inside this folder
+arbitrage-bot/
