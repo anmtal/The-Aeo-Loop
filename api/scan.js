@@ -189,6 +189,64 @@ const ENGINES = [
   { key: "claude",  name: "Claude",  vendor: "Anthropic", tag: "CL",  env: "ANTHROPIC_API_KEY", call: callAnthropic },
 ];
 
+/* ---- lead capture: append one row to the Google Sheet via Apps Script ----
+ * Reads the webhook URL + shared secret from environment variables. If the URL
+ * is not set, this is a silent no-op so the scanner keeps working. Lead capture
+ * never blocks or fails the scan response. ---------------------------------- */
+const STATE_LABELS = {
+  recommended: "Recommended",
+  mentioned:   "Mentioned",
+  cited:       "Cited",
+  competitor:  "Competitor",
+  excluded:    "Excluded",
+};
+
+async function saveLead(payload) {
+  const url = process.env.SHEET_WEBHOOK_URL;
+  if (!url) return; // not configured yet — skip cleanly
+  const { input, results, summary } = payload;
+  const byEngine = {};
+  results.forEach((r) => {
+    byEngine[r.engine] = `${STATE_LABELS[r.classification] || r.classification} · ${r.score}`;
+  });
+  const row = {
+    secret: process.env.SHEET_WEBHOOK_SECRET || "",
+    name: input.name,
+    email: input.email,
+    company: input.company,
+    website: input.website,
+    city: input.city,
+    area: input.area,
+    mode: payload.mode,
+    overall: summary.overall,
+    recommended: summary.recommended,
+    excluded: summary.excluded,
+    topCompetitor: summary.topCompetitor
+      ? `${summary.topCompetitor} (${summary.topCompetitorCount})`
+      : "",
+    primaryGap: summary.primaryGap || "",
+    chatgpt: byEngine.chatgpt || "",
+    gemini: byEngine.gemini || "",
+    grok: byEngine.grok || "",
+    claude: byEngine.claude || "",
+    prompt: payload.prompt || "",
+  };
+  try {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 5000);
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(row),
+      signal: controller.signal,
+      redirect: "follow",
+    });
+    clearTimeout(t);
+  } catch (_) {
+    // never block the scan on lead capture
+  }
+}
+
 function summarise(results, input) {
   const overall = Math.round(results.reduce((a, r) => a + r.score, 0) / results.length);
   const recommended = results.filter((r) => r.classification === "recommended").length;
@@ -251,11 +309,15 @@ module.exports = async function handler(req, res) {
     })
   );
 
-  // NOTE: lead capture (email → CRM / Google Sheet) and the 3-pass Gap Report
-  // generation are triggered here in production. Wire your destination below.
-  // e.g. await saveLead(input, results)  /  await queueGapReport(input, results)
-
   const payload = summarise(results, input);
   payload.prompt = userPrompt;
+
+  // Lead capture: append the lead + verdicts to the Google Sheet before
+  // returning. Awaited so the row is written, but it can never fail the scan.
+  await saveLead(payload);
+
+  // NOTE: the 3-pass Gap Report generation is triggered separately (next build
+  // step) so scan verdicts return fast. e.g. await queueGapReport(payload)
+
   res.status(200).json(payload);
 };
