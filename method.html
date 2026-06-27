@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How it works — The AEO Loop Method</title>
+  <meta name="description" content="The AEO Loop Method: observe, diagnose, optimize, distribute, verify, repeat. How the scanner queries four live engines, classifies results, assigns gaps, and how the three-pass Gap Report is built.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" data-open="false">
+  <div class="wrap nav__inner">
+    <a class="brand" href="index.html" aria-label="The AEO Loop home">
+      <svg class="brand__glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 6a10 10 0 1 0 9.6 12.8" fill="none" stroke="#0E9F77" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M23.5 11.5 26 18l-6.6 1.6" fill="none" stroke="#0E9F77" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      The AEO&nbsp;Loop
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="method.html" aria-current="page">How it works</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="scanner.html">Scanner</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div class="nav__cta"><a class="btn btn--primary" href="scanner.html">Run free scan</a></div>
+    <button class="nav__toggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- intro -->
+  <section class="section section--ink" style="padding-bottom:clamp(40px,6vw,72px)">
+    <div class="wrap">
+      <div class="section-head reveal" style="max-width:64ch">
+        <span class="eyebrow">How it works</span>
+        <h1 class="h-xl" style="margin-top:16px">The method behind the verdict.</h1>
+        <p class="lede" style="margin-top:18px">Two things make this defensible: every result is classified by a written rule, and the whole thing runs as a loop rather than a one-time audit. Here's the full mechanism — the scan, the classification, the gaps, and the report.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE LOOP DIAGRAM -->
+  <section class="section section--ink" style="padding-top:0">
+    <div class="wrap">
+      <div class="loopwrap">
+        <div class="reveal" aria-hidden="true">
+          <svg viewBox="0 0 360 360" width="100%" role="img" aria-label="The six-stage AEO Loop">
+            <defs>
+              <marker id="arrow" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+                <path d="M0 0 L9 4.5 L0 9 z" fill="#0E9F77"/>
+              </marker>
+            </defs>
+            <circle cx="180" cy="180" r="120" fill="none" stroke="#243443" stroke-width="2" stroke-dasharray="4 7"/>
+            <path d="M180 60 A120 120 0 0 1 283 240" fill="none" stroke="#0E9F77" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <!-- nodes -->
+            <g font-family="JetBrains Mono, monospace" font-size="12" fill="#EAEFF3" text-anchor="middle">
+              <g><circle cx="180" cy="60" r="34" fill="#14202E" stroke="#0E9F77" stroke-width="1.6"/><text x="180" y="58">Observe</text><text x="180" y="73" fill="#9FB0BF" font-size="9">01</text></g>
+              <g><circle cx="284" cy="120" r="34" fill="#14202E" stroke="#243443" stroke-width="1.6"/><text x="284" y="118">Diagnose</text><text x="284" y="133" fill="#9FB0BF" font-size="9">02</text></g>
+              <g><circle cx="284" cy="240" r="34" fill="#14202E" stroke="#243443" stroke-width="1.6"/><text x="284" y="238">Optimize</text><text x="284" y="253" fill="#9FB0BF" font-size="9">03</text></g>
+              <g><circle cx="180" cy="300" r="34" fill="#14202E" stroke="#243443" stroke-width="1.6"/><text x="180" y="298">Distribute</text><text x="180" y="313" fill="#9FB0BF" font-size="9">04</text></g>
+              <g><circle cx="76" cy="240" r="34" fill="#14202E" stroke="#243443" stroke-width="1.6"/><text x="76" y="238">Verify</text><text x="76" y="253" fill="#9FB0BF" font-size="9">05</text></g>
+              <g><circle cx="76" cy="120" r="34" fill="#14202E" stroke="#243443" stroke-width="1.6"/><text x="76" y="118">Repeat</text><text x="76" y="133" fill="#9FB0BF" font-size="9">06</text></g>
+            </g>
+            <text x="180" y="176" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="18" fill="#EAEFF3">The Loop</text>
+            <text x="180" y="196" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#9FB0BF">runs on a cadence</text>
+          </svg>
+        </div>
+        <div class="loop-steps reveal">
+          <div class="loop-step"><div class="loop-step__n">01</div><div><h3>Observe</h3><p>Fire real buying-intent prompts at ChatGPT, Gemini, Grok and Claude. Classify each result against the five-state taxonomy.</p></div></div>
+          <div class="loop-step"><div class="loop-step__n">02</div><div><h3>Diagnose</h3><p>Assign each result one of six fixed gap categories, so every finding ties to a concrete primary fix.</p></div></div>
+          <div class="loop-step"><div class="loop-step__n">03</div><div><h3>Optimize</h3><p>Restructure priority pages for answer extractability and roll out the schema engines read.</p></div></div>
+          <div class="loop-step"><div class="loop-step__n">04</div><div><h3>Distribute</h3><p>Place off-site authority signals on trusted channels, governed by a test-and-learn framework.</p></div></div>
+          <div class="loop-step"><div class="loop-step__n">05</div><div><h3>Verify</h3><p>Re-sample prompts on a cadence; report mention, citation and recommendation rates directionally.</p></div></div>
+          <div class="loop-step"><div class="loop-step__n">06</div><div><h3>Repeat</h3><p>Engines shift constantly. The loop defends the position and compounds a proprietary dataset.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCANNER ARCHITECTURE -->
+  <section class="section section--paper">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Inside the scanner</span>
+        <h2 class="h-lg">Real queries. Real responses. No simulation.</h2>
+        <p class="lede">You give six inputs. The scanner builds buying-intent prompts from them, fires one at all four engines, and classifies what comes back. Every output is derived from a live API response — there are no synthetic scores.</p>
+      </div>
+
+      <div class="grid grid--2" style="align-items:start">
+        <div class="card reveal">
+          <h3 style="margin-bottom:14px">What you provide</h3>
+          <ul class="kicker-list">
+            <li><b>Company website</b> — grounds the analysis in your domain.</li>
+            <li><b>Full name</b> — personalises the Gap Report.</li>
+            <li><b>Professional email</b> — where results and the report are sent.</li>
+            <li><b>Company name</b> — the entity engines are asked about.</li>
+            <li><b>City &amp; region</b> — builds geographically accurate queries.</li>
+            <li><b>Area of operation</b> — the highest-leverage input. Be specific: "family law," not "legal services."</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3 style="margin-bottom:14px">How a prompt is built</h3>
+          <p class="muted" style="margin-bottom:16px">One template is chosen at random per run and fired at every engine simultaneously, staggered by 700ms so you watch each verdict land.</p>
+          <div style="font-family:var(--mono);font-size:13px;background:var(--paper-2);border:1px solid var(--card-line);border-radius:10px;padding:16px;line-height:1.7">
+            <div class="muted">// template</div>
+            Best [area] firms in [location]<br>
+            <div class="muted" style="margin-top:10px">// example</div>
+            Best <b>family law</b> firms in <b>Toronto, ON</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid--4 reveal" style="margin-top:22px">
+        <div class="card"><div class="card__n">ChatGPT</div><h3 style="font-size:1rem;margin-top:6px">OpenAI</h3><p>Widest consumer familiarity.</p></div>
+        <div class="card"><div class="card__n">Gemini</div><h3 style="font-size:1rem;margin-top:6px">Google</h3><p>Strongest for local signals.</p></div>
+        <div class="card"><div class="card__n">Grok</div><h3 style="font-size:1rem;margin-top:6px">xAI</h3><p>Fastest-moving dataset.</p></div>
+        <div class="card"><div class="card__n">Claude</div><h3 style="font-size:1rem;margin-top:6px">Anthropic</h3><p>Powers report analysis.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCORING + GAPS -->
+  <section class="section section--ink">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">Scoring &amp; gaps</span>
+        <h2 class="h-lg">Every score is traceable. Every gap maps to a fix.</h2>
+        <p class="lede">Each engine produces a 0–100 visibility score from its classification. The overall score is the average of all four. Then each result is assigned exactly one gap category — no free-text guesswork.</p>
+      </div>
+
+      <div class="tbl-scroll reveal" style="margin-bottom:24px">
+        <table class="feat">
+          <thead><tr><th>Classification</th><th>Score band</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge is-line badge--rec">Recommended</span></td><td>75–90</td><td>High signal strength confirmed.</td></tr>
+            <tr><td><span class="badge is-line badge--men">Mentioned</span></td><td>45–60</td><td>Present but passive.</td></tr>
+            <tr><td><span class="badge is-line badge--cit">Cited</span></td><td>38–50</td><td>Content authority, not recommendation authority.</td></tr>
+            <tr><td><span class="badge is-line badge--comp">Competitor Surfaced</span></td><td>18–30</td><td>Actively displaced by a named competitor.</td></tr>
+            <tr><td><span class="badge is-line badge--exc">Excluded</span></td><td>5–18</td><td>No signal detected.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid grid--3 reveal">
+        <div class="card"><h3>Weak Local Relevance</h3><p>Engine can't tie you to a geography. → LocalBusiness schema, location content, Google Business Profile.</p></div>
+        <div class="card"><h3>Thin Service Pages</h3><p>No extractable content describing services. → Dedicated service pages with FAQ blocks and clear entity language.</p></div>
+        <div class="card"><h3>Missing Citations</h3><p>No presence on sources engines draw from. → Off-site placements, directories, review generation.</p></div>
+        <div class="card"><h3>Low Review Density</h3><p>Too few or stale reviews for recommendation logic. → Structured review acquisition across platforms.</p></div>
+        <div class="card"><h3>Weak Entity Clarity</h3><p>Engine can't identify you as a distinct entity. → Organisation schema, consistent NAP, Wikidata presence.</p></div>
+        <div class="card"><h3>Competitor Dominance</h3><p>One rival's signal density crowds you out. → Targeted content and citation strategy against them.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREE-PASS GAP REPORT -->
+  <section class="section section--paper">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="eyebrow">The Gap Report</span>
+        <h2 class="h-lg">Automated to draft. Human to send.</h2>
+        <p class="lede">The scanner shows scores and verdicts. The full 11-section Gap Report is generated separately, passed through three AI roles, then reviewed by the founder before it reaches you — within 24–48 hours, from a personal address, not a no-reply.</p>
+      </div>
+      <div class="grid grid--4 reveal">
+        <div class="card"><div class="card__n">Pass 1 · Claude</div><h3 style="font-size:1.05rem;margin-top:8px">Draft</h3><p>Builds all 11 sections anchored to your real scan data — classifications, competitors, gaps and scores.</p></div>
+        <div class="card"><div class="card__n">Pass 2 · ChatGPT</div><h3 style="font-size:1.05rem;margin-top:8px">Edit</h3><p>Reviews for logic, clarity and client-ready tone. Makes sure priority fixes are genuinely prioritised.</p></div>
+        <div class="card"><div class="card__n">Pass 3 · Gemini</div><h3 style="font-size:1.05rem;margin-top:8px">Verify</h3><p>Uses web search to check claims about you and your competitors against public evidence, softening anything unverifiable.</p></div>
+        <div class="card" style="border-color:var(--accent)"><div class="card__n">Gate · Founder</div><h3 style="font-size:1.05rem;margin-top:8px">Review</h3><p>The non-negotiable quality gate. Adds context only the founder would have, then sends it personally.</p></div>
+      </div>
+      <p class="note reveal" style="margin-top:28px">AI visibility is measured through repeated prompt sampling across selected answer engines. Movement should be read directionally — month-to-month change can reflect optimisation work, competitor activity, or platform updates rather than any single cause. This caveat appears in every client report.</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section--paper section--band">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <span class="eyebrow" style="justify-content:center">Your turn</span>
+        <h2 class="h-lg">Run the method on your own business.</h2>
+        <p>One scan, four engines, real queries. See your verdicts now and get the founder-reviewed Gap Report within 48 hours.</p>
+        <div class="hero__cta"><a class="btn btn--primary btn--lg" href="scanner.html">Run my free scan <span class="arr">→</span></a><a class="btn btn--ghost btn--lg" href="pricing.html">See pricing</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div>
+        <div class="footer__brand">
+          <svg class="brand__glyph" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 6a10 10 0 1 0 9.6 12.8" fill="none" stroke="#0E9F77" stroke-width="2.8" stroke-linecap="round"/><path d="M23.5 11.5 26 18l-6.6 1.6" fill="none" stroke="#0E9F77" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          The AEO Loop
+        </div>
+        <p style="margin-top:14px;max-width:34ch;font-size:14.5px">A managed AI recommendation and visibility system. The promise is a structured operating model — not rankings, not guarantees, not noise.</p>
+      </div>
+      <div><h4>Explore</h4><a href="method.html">How it works</a><a href="pricing.html">Pricing</a><a href="scanner.html">Free scanner</a><a href="contact.html">Contact</a></div>
+      <div><h4>Get in touch</h4><a href="mailto:contact@theaeoloop.com">contact@theaeoloop.com</a><a href="https://theaeoloop.com">theaeoloop.com</a><a href="scanner.html">Run a free scan</a></div>
+    </div>
+    <div class="footer__bottom"><span>© <span id="yr"></span> The AEO Loop. All rights reserved.</span><span style="font-family:var(--mono)">Observe · Diagnose · Optimize · Distribute · Verify · Repeat</span></div>
+  </div>
+</footer>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script src="assets/app.js" defer></script>
+</body>
+</html>

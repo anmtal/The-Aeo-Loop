@@ -1,0 +1,21 @@
+# Secrets — NEVER commit real keys
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Dependencies
+node_modules/
+
+# Vercel
+.vercel
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+
+# Claude Code local settings
+.claude/
