@@ -325,15 +325,19 @@ table.feat tr:last-child td { border-bottom: 0; }
 .field textarea { resize: vertical; }
 .field input::placeholder, .field textarea::placeholder { color: #56697a; }
 /* keep browser autofill on-theme (Chrome paints a light bg by default) */
-.field input:-webkit-autofill,
-.field input:-webkit-autofill:hover,
-.field input:-webkit-autofill:focus,
-.field textarea:-webkit-autofill {
-  -webkit-text-fill-color: var(--on-ink);
-  -webkit-box-shadow: 0 0 0 1000px #0a121b inset;
-  box-shadow: 0 0 0 1000px #0a121b inset;
-  caret-color: var(--on-ink);
-  border: 1px solid var(--ink-line);
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--on-ink) !important;
+  -webkit-box-shadow: 0 0 0 1000px #0a121b inset !important;
+  box-shadow: 0 0 0 1000px #0a121b inset !important;
+  caret-color: var(--on-ink) !important;
+  border: 1px solid var(--ink-line) !important;
+  transition: background-color 600000s 0s, color 600000s 0s;
 }
 .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent-br); box-shadow: 0 0 0 3px rgba(26,214,160,.22); }
 .field input[aria-invalid="true"], .field textarea[aria-invalid="true"] { border-color: var(--v-exc); }
@@ -358,6 +362,16 @@ table.feat tr:last-child td { border-bottom: 0; }
 .summary__meta .big { font-family: var(--display); font-weight: 800; font-size: 1.4rem; color: var(--on-ink); }
 .summary__meta .row { font-size: 14px; color: var(--on-ink-2); }
 .summary__meta .row b { color: var(--on-ink); }
+/* compact verdict legend shown alongside results */
+.legend-mini { display: grid; gap: 8px; margin-top: 18px; }
+.legend-mini__head { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); margin: 4px 2px 2px; }
+.legend-mini__row { display: flex; align-items: center; gap: 14px; background: var(--ink-soft); border: 1px solid var(--ink-line); border-radius: 12px; padding: 11px 14px; }
+.legend-mini__row .badge { flex: none; min-width: 118px; text-align: center; justify-content: center; display: inline-flex; }
+.legend-mini__row p { font-size: 13.5px; color: var(--on-ink-2); margin: 0; }
+@media (max-width: 480px) {
+  .legend-mini__row { flex-direction: column; align-items: flex-start; gap: 7px; }
+}
+
 .gate { background: var(--card); border: 1px solid var(--card-line); border-radius: 16px; padding: 26px; margin-top: 18px; text-align: center; }
 .gate h3 { font-size: 1.3rem; }
 .gate p { color: var(--text-2); font-size: 15px; margin: 8px auto 0; max-width: 52ch; }

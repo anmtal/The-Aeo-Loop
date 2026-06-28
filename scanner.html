@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Free AI Visibility Scanner — The AEO Loop</title>
   <meta name="description" content="Run real buying-intent prompts against ChatGPT, Gemini, Grok and Claude. See your classification, score and the competitors AI recommends instead of you. Free.">
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=2">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -17,7 +17,7 @@
 <header class="nav" data-open="false">
   <div class="wrap nav__inner">
     <a class="brand" href="index.html" aria-label="The AEO Loop home">
-      <svg class="brand__glyph" viewBox="0 0 32 32" aria-hidden="true"><path d="M26 16 A10 10 0 1 1 15 6" fill="none" stroke="#1AD6A0" stroke-width="3.4" stroke-linecap="round"/><path d="M14.2 2.6 20.2 6 14.2 9.4Z" fill="#1AD6A0"/></svg>
+      <svg class="brand__glyph" viewBox="0 0 32 32" aria-hidden="true"><path d="M26 16 A10 10 0 1 1 15 6" fill="none" stroke="#1AD6A0" stroke-width="4.2" stroke-linecap="round"/><path d="M13.8 2 20.8 6 13.8 10Z" fill="#1AD6A0"/></svg>
       The AEO&nbsp;Loop
     </a>
     <nav class="nav__links" aria-label="Primary">
@@ -128,6 +128,15 @@
           <div data-cards></div>
         </div>
 
+        <div class="legend-mini" aria-label="What each verdict means">
+          <div class="legend-mini__head">What each verdict means</div>
+          <div class="legend-mini__row"><span class="badge is-line badge--rec">Recommended</span><p>AI actively tells buyers to choose you by name.</p></div>
+          <div class="legend-mini__row"><span class="badge is-line badge--men">Mentioned</span><p>AI names you in passing, but doesn't endorse you.</p></div>
+          <div class="legend-mini__row"><span class="badge is-line badge--cit">Cited</span><p>AI uses your site as a source, but won't recommend hiring you.</p></div>
+          <div class="legend-mini__row"><span class="badge is-line badge--comp">Competitor</span><p>AI recommends a named rival in the spot you should hold.</p></div>
+          <div class="legend-mini__row"><span class="badge is-line badge--exc">Excluded</span><p>AI doesn't mention you at all — you're invisible for this query.</p></div>
+        </div>
+
         <div class="gate">
           <h3>Your full Gap Report is on its way.</h3>
           <p>The scanner shows scores and verdicts. The complete 11-section Gap Report — competitor comparison, prompt intent matrix, and a prioritised fix plan — is produced through a rigorous, evidence-checked process, reviewed personally by the founder, and emailed within 24–48 hours.</p>
@@ -154,7 +163,7 @@
   <div class="wrap">
     <div class="footer__grid">
       <div>
-        <div class="footer__brand"><svg class="brand__glyph" viewBox="0 0 32 32" aria-hidden="true"><path d="M26 16 A10 10 0 1 1 15 6" fill="none" stroke="#1AD6A0" stroke-width="3.4" stroke-linecap="round"/><path d="M14.2 2.6 20.2 6 14.2 9.4Z" fill="#1AD6A0"/></svg> The AEO Loop</div>
+        <div class="footer__brand"><svg class="brand__glyph" viewBox="0 0 32 32" aria-hidden="true"><path d="M26 16 A10 10 0 1 1 15 6" fill="none" stroke="#1AD6A0" stroke-width="4.2" stroke-linecap="round"/><path d="M13.8 2 20.8 6 13.8 10Z" fill="#1AD6A0"/></svg> The AEO Loop</div>
         <p style="margin-top:14px;max-width:34ch;font-size:14.5px">A managed AI recommendation and visibility system. The promise is a structured operating model — not rankings, not guarantees, not noise.</p>
       </div>
       <div><h4>Explore</h4><a href="method.html">How it works</a><a href="pricing.html">Pricing</a><a href="scanner.html">Free scanner</a><a href="contact.html">Contact</a></div>
@@ -164,6 +173,6 @@
   </div>
 </footer>
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
-<script src="assets/app.js" defer></script>
+<script src="assets/app.js?v=2" defer></script>
 </body>
 </html>
