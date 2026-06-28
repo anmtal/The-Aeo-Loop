@@ -422,6 +422,18 @@ textarea:-webkit-autofill:focus {
 .footer a:hover { color: var(--on-ink); }
 .footer__brand { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--on-ink); display: flex; align-items: center; gap: 10px; }
 .footer__bottom { margin-top: 40px; padding-top: 22px; border-top: 1px solid var(--ink-line); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--on-ink-2); }
+.footer__bottom a { display: inline; padding: 0; color: var(--on-ink-2); }
+.footer__bottom a:hover { color: var(--on-ink); }
+
+/* ---- legal pages (privacy / terms) ---- */
+.legal { max-width: 760px; }
+.legal__meta { font-family: var(--mono); font-size: 13px; color: var(--text-2); }
+.legal h2 { font-size: 1.4rem; margin: 38px 0 12px; }
+.legal h2:first-child { margin-top: 0; }
+.legal p { color: var(--text-2); margin-bottom: 14px; line-height: 1.7; font-size: 15.5px; }
+.legal ul { color: var(--text-2); margin: 0 0 16px; padding-left: 22px; display: grid; gap: 7px; font-size: 15.5px; line-height: 1.6; }
+.legal strong { color: var(--text); font-weight: 600; }
+.legal a { color: var(--accent-br); }
 
 /* ---------- misc content ---------- */
 .prose p { margin-bottom: 18px; max-width: 66ch; }
