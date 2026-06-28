@@ -3,7 +3,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "functions": {
-    "api/scan.js": { "maxDuration": 30 }
+    "api/scan.js": { "maxDuration": 60 }
   },
   "headers": [
     {

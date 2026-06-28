@@ -1,0 +1,7 @@
+{
+  "name": "the-aeo-loop",
+  "private": true,
+  "dependencies": {
+    "@vercel/functions": "latest"
+  }
+}

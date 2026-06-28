@@ -16,6 +16,15 @@
  *  browser. Do not import or expose process.env to the client.
  * ========================================================================= */
 
+// Vercel's waitUntil keeps the function alive to finish background work (the
+// Gap Report) after the scan response has already been sent. Fallback is a
+// no-op-safe passthrough so the scanner never breaks if it's unavailable.
+let waitUntil = function (p) { return p; };
+try { ({ waitUntil } = require("@vercel/functions")); } catch (_) {}
+
+const FOUNDER_EMAIL = "contact@theaeoloop.com";
+const FROM_EMAIL = "The AEO Loop <contact@theaeoloop.com>";
+
 const STATE_BANDS = {
   recommended: [75, 90],
   mentioned:   [45, 60],
@@ -286,6 +295,89 @@ function summarise(results, input) {
   };
 }
 
+/* ---- Gap Report: generate from scan data and email a draft to the founder.
+ * Runs in the background (via waitUntil) so it never delays scan verdicts.
+ * The report is a strategic diagnosis only — guardrails forbid implementation
+ * detail — and is emailed to the founder to review before sending to a client.
+ * No-op (with a clear log) if ANTHROPIC_API_KEY or RESEND_API_KEY is missing. */
+function stripFence(s) {
+  return String(s || "").replace(/^\s*```(?:html)?\s*/i, "").replace(/\s*```\s*$/i, "").trim();
+}
+
+function gapReportPrompt(payload) {
+  const { input, results, summary } = payload;
+  const lines = results
+    .map((r) => `- ${r.name} (${r.vendor}): ${r.classification.toUpperCase()} — ${r.score}/100. ${r.reason}${r.competitor ? ` Competitor surfaced: ${r.competitor}.` : ""} Gap: ${r.gapLabel}.`)
+    .join("\n");
+  return [
+    `You are an expert AI visibility strategist writing a client-facing "Gap Report" for ${input.company}.`,
+    ``,
+    `SCAN DATA — the factual foundation. Build every section on this; do not invent data:`,
+    `Company: ${input.company} | Website: ${input.website} | Area: ${input.area} | Location: ${input.city}`,
+    `Prompt used: "${payload.prompt}"`,
+    `Overall visibility: ${summary.overall}/100. Recommended on ${summary.recommended} engine(s), Excluded on ${summary.excluded}.`,
+    `Most surfaced competitor: ${summary.topCompetitor || "none"}. Primary gap: ${summary.primaryGap || "n/a"}.`,
+    `Per-engine results:`,
+    lines,
+    ``,
+    `Write a professional 11-section Gap Report in clean semantic HTML — use <h2>, <h3>, <p>, <ul>, <table>; NO <html>/<head>/<body> wrapper, NO markdown, NO inline styles, NO code fences.`,
+    `Sections in order: 1) Executive Summary 2) Inputs Used 3) AI Recommendation Coverage 4) Citation Coverage 5) Competitor Coverage 6) Authority Gaps 7) Structure Gaps 8) Prompt Intent Matrix 9) Off-site Authority Snapshot 10) Priority Fixes 11) Final Recommendation.`,
+    ``,
+    `CONFIDENTIALITY (critical): this is a diagnostic and strategic summary, NOT an implementation guide. Do NOT include copy-ready page drafts, step-by-step instructions, schema or JSON-LD code, the scanning prompt library, tool names, or platform-specific settings. Keep everything at the strategic / categorical level.`,
+    `PRIORITY FIXES guardrail: each fix names the CATEGORY of work and why it matters — never the method, tool, sequence, or output format. Correct example: "Your service pages lack the structured, extractable content engines need to cite you as a recommendation source. A paid implementation addresses this directly."`,
+    `Final Recommendation must route the client toward the Implementation package or Growth retainer, and include this caveat verbatim: "AI visibility is measured through repeated prompt sampling and should be read directionally; month-to-month change can reflect optimisation work, competitor activity, or platform updates."`,
+    `Tone: confident, senior, concise.`,
+  ].join("\n");
+}
+
+async function callAnthropicReport(key, prompt) {
+  const r = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 3200,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (!r.ok) throw new Error("anthropic-report " + r.status);
+  const j = await r.json();
+  return (j.content || []).map((b) => b.text || "").join("");
+}
+
+async function emailGapReport(html, payload) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) throw new Error("no RESEND_API_KEY");
+  const { input, summary } = payload;
+  const intro =
+    `<p style="font:14px/1.5 system-ui,sans-serif;color:#444">` +
+    `<strong>Draft Gap Report — review before sending.</strong><br>` +
+    `Lead: ${input.name} &lt;${input.email}&gt; · ${input.company} · ${input.area} · ${input.city}<br>` +
+    `Overall ${summary.overall}/100 · Recommended ${summary.recommended} · Excluded ${summary.excluded} · ` +
+    `Top competitor: ${summary.topCompetitor || "none"} · Primary gap: ${summary.primaryGap || "n/a"}` +
+    `</p><hr>`;
+  const r = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      from: FROM_EMAIL,
+      to: [FOUNDER_EMAIL],
+      reply_to: input.email,
+      subject: `Gap Report draft — ${input.company} (${summary.overall}/100)`,
+      html: intro + html,
+    }),
+  });
+  if (!r.ok) throw new Error("resend " + r.status + " " + (await r.text()).slice(0, 160));
+}
+
+async function generateAndEmailGapReport(payload) {
+  const akey = process.env.ANTHROPIC_API_KEY;
+  if (!akey || !process.env.RESEND_API_KEY) return; // not configured yet — skip cleanly
+  const html = stripFence(await callAnthropicReport(akey, gapReportPrompt(payload)));
+  if (!html) return;
+  await emailGapReport(html, payload);
+}
+
 module.exports = async function handler(req, res) {
   // ---- Diagnostics: GET /api/scan?debug=<SHEET_WEBHOOK_SECRET> returns
   // per-engine health (NO secrets in the output). Gated behind the secret so
@@ -347,6 +439,7 @@ module.exports = async function handler(req, res) {
       hasFetch: typeof fetch === "function",
       webhookUrlSet: !!process.env.SHEET_WEBHOOK_URL,
       webhookSecretSet: !!process.env.SHEET_WEBHOOK_SECRET,
+      resendKeySet: !!process.env.RESEND_API_KEY,
       webhook,
       diagnostics,
     });
@@ -402,8 +495,15 @@ module.exports = async function handler(req, res) {
   // returning. Awaited so the row is written, but it can never fail the scan.
   await saveLead(payload);
 
-  // NOTE: the 3-pass Gap Report generation is triggered separately (next build
-  // step) so scan verdicts return fast. e.g. await queueGapReport(payload)
-
+  // Return verdicts immediately.
   res.status(200).json(payload);
+
+  // Gap Report: generate + email the draft to the founder in the background,
+  // so it never delays the scan response. Errors are swallowed (logged) and
+  // never affect the user-facing result.
+  waitUntil(
+    generateAndEmailGapReport(payload).catch((e) => {
+      console.error("gap-report failed:", (e && e.message) || e);
+    })
+  );
 };
