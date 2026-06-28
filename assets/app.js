@@ -102,7 +102,8 @@
         competitor: (state === "competitor") ? comp : null,
         gap: gapKey,
         gapLabel: GAPS[gapKey].label,
-        gapFix: GAPS[gapKey].fix
+        gapFix: GAPS[gapKey].fix,
+        live: false
       };
     });
     return summarise(results, input);
@@ -125,22 +126,6 @@
     };
   }
 
-  /* ===================== HERO sample panel animation ===================== */
-  var heroPanel = document.querySelector("[data-hero-panel]");
-  if (heroPanel) {
-    var sample = demoResults({ company: "Your firm", area: "family law", city: "Toronto" });
-    // force a representative, legible spread for the hero
-    var spread = ["excluded", "competitor", "mentioned", "recommended"];
-    sample.results.forEach(function (r, i) { r.classification = spread[i]; r.score = bandScore(spread[i], rng(seedFrom(r.name + i))); r.reason = reasonFor(spread[i], "Your firm", "Meridian"); r.competitor = spread[i] === "competitor" ? "Meridian" : null; });
-    sample = summarise(sample.results, { company: "Your firm" });
-    renderEngineCards(heroPanel.querySelector("[data-cards]"), sample.results, true);
-    var hs = heroPanel.querySelector("[data-hero-score]");
-    if (hs) {
-      if (reduce) { hs.textContent = sample.summary.overall; }
-      else { animateCount(hs, sample.summary.overall, 1400); }
-    }
-  }
-
   function renderEngineCards(host, results, stagger) {
     if (!host) return;
     host.innerHTML = "";
@@ -150,7 +135,7 @@
       el.className = "enginecard";
       el.innerHTML =
         '<div class="enginecard__logo">' + r.tag + '</div>' +
-        '<div><div class="enginecard__name">' + r.name + ' <span class="muted" style="font-weight:400;font-size:12px">· ' + r.vendor + '</span></div>' +
+        '<div><div class="enginecard__name">' + r.name + ' <span class="muted" style="font-weight:400;font-size:12px">· ' + r.vendor + '</span>' + (r.live === false ? ' <span class="enginecard__demo">demo</span>' : '') + '</div>' +
         '<div class="enginecard__reason">' + escapeHtml(r.reason) + '</div></div>' +
         '<div style="text-align:right"><span class="badge badge--' + st.cls + '">' + st.label + '</span>' +
         '<div style="font-family:var(--mono);font-size:13px;color:var(--on-ink-2);margin-top:6px">' + r.score + '/100</div></div>';
@@ -214,17 +199,34 @@
       form.querySelectorAll("input").forEach(function (inp) { if (!validateField(inp)) ok = false; });
       if (!ok) { form.querySelector('[aria-invalid="true"]').focus(); return; }
 
+      var tsEl = form.querySelector('[name="cf-turnstile-response"]');
       var input = {
         company: form.company.value.trim(),
         website: form.website.value.trim(),
         name: form.name.value.trim(),
         email: form.email.value.trim(),
         city: form.city.value.trim(),
-        area: form.area.value.trim()
+        area: form.area.value.trim(),
+        turnstileToken: tsEl ? tsEl.value : ""
       };
 
       runScan(input);
     });
+
+    function showScanError(msg) {
+      var box = form.querySelector("[data-scan-error]");
+      if (!box) {
+        box = document.createElement("p");
+        box.setAttribute("data-scan-error", "");
+        box.setAttribute("role", "alert");
+        box.className = "consent";
+        box.style.color = "#ff9b95";
+        form.appendChild(box);
+      }
+      box.textContent = msg;
+    }
+    function clearScanError() { var b = form.querySelector("[data-scan-error]"); if (b) b.textContent = ""; }
+    function resetTurnstile() { if (window.turnstile) { try { window.turnstile.reset(); } catch (e) {} } }
 
     function setLoading(on) {
       submitBtn.disabled = on;
@@ -233,14 +235,24 @@
 
     function runScan(input) {
       setLoading(true);
+      clearScanError();
       if (resultsEl) { resultsEl.classList.remove("show"); }
 
-      // Try the real serverless endpoint first; fall back to demo.
       fetchScan(input).then(function (data) {
         setLoading(false);
         render(data, input);
-      }).catch(function () {
+      }).catch(function (err) {
         setLoading(false);
+        // Blocked or rate-limited: be honest, don't swap in fabricated demo data.
+        if (err && (err.status === 403 || err.status === 429)) {
+          showScanError(err.status === 429
+            ? "You've reached the scan limit for now — please try again later."
+            : "We couldn't verify that request. Please complete the check and retry.");
+          resetTurnstile();
+          return;
+        }
+        // True connectivity failure (offline / endpoint down): fall back to the
+        // clearly-labelled demo so the page still does something.
         render(demoResults(input), input);
       });
     }
@@ -248,7 +260,7 @@
     function fetchScan(input) {
       return new Promise(function (resolve, reject) {
         var controller = new AbortController();
-        var t = setTimeout(function () { controller.abort(); }, 20000);
+        var t = setTimeout(function () { controller.abort(); }, 25000);
         fetch("/api/scan", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -256,7 +268,7 @@
           signal: controller.signal
         }).then(function (r) {
           clearTimeout(t);
-          if (!r.ok) return reject(new Error("bad status"));
+          if (!r.ok) { var e = new Error("status " + r.status); e.status = r.status; return reject(e); }
           return r.json();
         }).then(function (j) {
           if (j && j.results && j.results.length) resolve(j); else reject(new Error("no results"));

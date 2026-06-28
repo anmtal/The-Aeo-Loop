@@ -226,6 +226,7 @@ p { margin: 0; }
 .enginecard__logo { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: #0a121b; border: 1px solid var(--ink-line); font-family: var(--mono); font-weight: 700; font-size: 13px; color: var(--on-ink); }
 .enginecard__name { font-weight: 600; font-size: 15px; color: var(--on-ink); }
 .enginecard__reason { font-size: 12.5px; color: var(--on-ink-2); margin-top: 2px; }
+.enginecard__demo { font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--v-men); background: rgba(214,154,42,.14); border: 1px solid rgba(214,154,42,.4); padding: 1px 6px; border-radius: 999px; margin-left: 5px; vertical-align: middle; }
 
 .badge {
   font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
