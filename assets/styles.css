@@ -433,8 +433,7 @@ textarea:-webkit-autofill:focus {
 .founder__name { font-family: var(--display); font-weight: 800; font-size: 1.5rem; color: var(--on-ink); }
 .founder__role { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-br); margin-top: 5px; }
 .founder__card .btn { margin-top: 18px; }
-.founder__story p { margin-bottom: 16px; font-size: 16px; line-height: 1.75; color: var(--on-ink-2); }
-.founder__story p:first-child { color: var(--on-ink); font-size: 18px; }
+.founder__story p { margin-bottom: 16px; font-size: 16.5px; line-height: 1.75; color: var(--on-ink-2); }
 .founder__story p:last-child { margin-bottom: 0; }
 
 .founder-strip { display: flex; align-items: center; gap: 20px; background: var(--card); border: 1px solid var(--card-line); border-radius: var(--r); padding: 22px 26px; max-width: 760px; box-shadow: var(--shadow); }
