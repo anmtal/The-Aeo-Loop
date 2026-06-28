@@ -287,9 +287,15 @@ function summarise(results, input) {
 }
 
 module.exports = async function handler(req, res) {
-  // ---- Diagnostics: GET /api/scan returns per-engine health with NO secrets.
-  // Reports only whether each key is present and the live call's status/error.
+  // ---- Diagnostics: GET /api/scan?debug=<SHEET_WEBHOOK_SECRET> returns
+  // per-engine health (NO secrets in the output). Gated behind the secret so
+  // the public can't trigger real API calls. Any other GET returns 404.
   if (req.method === "GET") {
+    const debug = (req.query && req.query.debug) || "";
+    if (!process.env.SHEET_WEBHOOK_SECRET || debug !== process.env.SHEET_WEBHOOK_SECRET) {
+      res.status(404).json({ error: "Not found" });
+      return;
+    }
     const sampleInput = { company: "Test Co", website: "test.com", area: "plumbing", city: "Austin" };
     const userPrompt = "Best plumbing companies in Austin";
     const diagnostics = await Promise.all(
