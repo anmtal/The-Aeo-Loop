@@ -292,7 +292,7 @@ p { margin: 0; }
 @media (max-width: 1080px) { .tiers { grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 760px; margin-inline: auto; } }
 @media (max-width: 560px) { .tiers { grid-template-columns: 1fr; max-width: 440px; } }
 .tier { background: var(--card); border: 1px solid var(--card-line); border-radius: var(--r); padding: 28px 22px; position: relative; box-shadow: var(--shadow); transition: transform .2s ease, border-color .2s ease; display: flex; flex-direction: column; }
-.tier .btn { margin-top: auto; }
+.tier .btn { margin-top: auto; justify-content: center; text-align: center; }
 .tier:hover { transform: translateY(-3px); }
 .tier--hero { border-color: color-mix(in srgb, var(--accent) 60%, transparent); box-shadow: var(--glow); }
 .tier__flag { position: absolute; top: -12px; left: 26px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: var(--accent); color: #04130E; padding: 5px 12px; border-radius: 999px; }
