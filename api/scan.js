@@ -276,6 +276,40 @@ async function saveLead(payload) {
   }
 }
 
+/* ---- aggregate one engine's 5 per-prompt results into a single verdict ----
+ * Score = average of the five prompt scores. Classification, gap and competitor
+ * are the most frequent across the five (a stable, representative verdict). */
+function pickMode(values) {
+  const counts = {};
+  values.forEach((v) => { if (v != null && v !== "") counts[v] = (counts[v] || 0) + 1; });
+  let best = null, n = -1;
+  Object.keys(counts).forEach((k) => { if (counts[k] > n) { n = counts[k]; best = k; } });
+  return best;
+}
+
+function aggregateEngine(engine, list) {
+  const avg = Math.round(list.reduce((a, r) => a + r.score, 0) / list.length);
+  const classification = pickMode(list.map((r) => r.classification)) || "excluded";
+  const gapKey = GAPS[pickMode(list.map((r) => r.gap))] ? pickMode(list.map((r) => r.gap)) : "thin";
+  const competitor = pickMode(list.map((r) => r.competitor)) || null;
+  const rep = list.find((r) => r.classification === classification) || list[0];
+  return {
+    engine: engine.key,
+    name: engine.name,
+    vendor: engine.vendor,
+    tag: engine.tag,
+    classification,
+    score: avg,
+    reason: rep.reason,
+    competitor,
+    gap: gapKey,
+    gapLabel: GAPS[gapKey].label,
+    gapFix: GAPS[gapKey].fix,
+    live: true,
+    prompts: list.length,
+  };
+}
+
 function summarise(results, input) {
   const overall = Math.round(results.reduce((a, r) => a + r.score, 0) / results.length);
   const recommended = results.filter((r) => r.classification === "recommended").length;
@@ -314,7 +348,7 @@ function gapReportPrompt(payload) {
     ``,
     `SCAN DATA — the factual foundation. Build every section on this; do not invent data:`,
     `Company: ${input.company} | Website: ${input.website} | Area: ${input.area} | Location: ${input.city}`,
-    `Prompt used: "${payload.prompt}"`,
+    `Prompts used (five buying-intent queries per engine; scores are averaged): ${payload.prompt}`,
     `Overall visibility: ${summary.overall}/100. Recommended on ${summary.recommended} engine(s), Excluded on ${summary.excluded}.`,
     `Most surfaced competitor: ${summary.topCompetitor || "none"}. Primary gap: ${summary.primaryGap || "n/a"}.`,
     `Per-engine results:`,
@@ -502,27 +536,35 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  // Build the prompt (one chosen at random, per the spec).
-  const tpl = PROMPT_TEMPLATES[Math.floor(Math.random() * PROMPT_TEMPLATES.length)];
-  const userPrompt = tpl(input.area, input.city);
+  // Build all five buying-intent prompts. Each engine is queried with all five
+  // and its score is the average across them (a more stable signal than one).
+  const prompts = PROMPT_TEMPLATES.map((t) => t(input.area, input.city));
 
-  // Query each engine; fall back to a demo verdict per engine on any failure.
+  // Query each engine with the five prompts in parallel; aggregate to one
+  // verdict. Fall back to a demo verdict per engine only if all five fail.
   const results = await Promise.all(
     ENGINES.map(async (eng, i) => {
       const key = process.env[eng.env];
       if (!key) return demoEngine(eng, input, i);
-      try {
-        const sys = systemPrompt(eng.name, eng.vendor, input, userPrompt);
-        const raw = await eng.call(key, sys, userPrompt);
-        return normalise(raw, eng, input) || demoEngine(eng, input, i);
-      } catch (_) {
-        return demoEngine(eng, input, i);
-      }
+      const perPrompt = await Promise.all(
+        prompts.map(async (p) => {
+          try {
+            const sys = systemPrompt(eng.name, eng.vendor, input, p);
+            const raw = await eng.call(key, sys, p);
+            return normalise(raw, eng, input);
+          } catch (_) {
+            return null;
+          }
+        })
+      );
+      const valid = perPrompt.filter(Boolean);
+      return valid.length ? aggregateEngine(eng, valid) : demoEngine(eng, input, i);
     })
   );
 
   const payload = summarise(results, input);
-  payload.prompt = userPrompt;
+  payload.prompts = prompts;
+  payload.prompt = prompts.join(" | ");
 
   // Lead capture: append the lead + verdicts to the Google Sheet before
   // returning. Awaited so the row is written, but it can never fail the scan.
