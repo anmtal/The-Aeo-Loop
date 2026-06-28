@@ -424,7 +424,13 @@ textarea:-webkit-autofill:focus {
 /* ============================ neon accents ============================
    A light neon layer over the dark theme: glowing logo, accent words,
    CTAs, and card edges. Kept subtle so text stays readable. */
-.brand__glyph { filter: drop-shadow(0 0 5px rgba(26,214,160,.55)); }
+.brand__glyph { width: 32px; height: 32px; filter: drop-shadow(0 0 6px rgba(26,214,160,.6)); }
+.brand .brand__glyph { width: 40px; height: 40px; }
+
+/* ambient neon colour blooms behind the sections */
+.section--ink   { background-image: radial-gradient(80% 65% at 85% -12%, rgba(26,214,160,.10), transparent 55%); }
+.section--paper { background-image: radial-gradient(80% 65% at 12% -12%, rgba(76,147,214,.08), transparent 55%); }
+.footer         { background-image: radial-gradient(60% 120% at 50% 130%, rgba(26,214,160,.08), transparent 60%); }
 
 .eyebrow { text-shadow: 0 0 16px rgba(26,214,160,.35); }
 .hero h1 .em { text-shadow: 0 0 26px rgba(26,214,160,.45), 0 0 8px rgba(26,214,160,.35); }

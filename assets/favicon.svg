@@ -6,6 +6,6 @@
     </filter>
   </defs>
   <rect width="32" height="32" rx="7" fill="#0A0E15"/>
-  <path d="M16 16 C13 11 7 11 7 16 C7 21 13 21 16 16 C19 11 25 11 25 16 C25 21 19 21 16 16Z"
-        fill="none" stroke="#1AD6A0" stroke-width="3.4" stroke-linecap="round" filter="url(#glow)"/>
+  <path d="M16 16 C12 8 5 8 5 16 C5 24 12 24 16 16 C20 8 27 8 27 16 C27 24 20 24 16 16Z"
+        fill="none" stroke="#1AD6A0" stroke-width="3.2" stroke-linecap="round" filter="url(#glow)"/>
 </svg>
