@@ -433,6 +433,33 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    // Optional: ?debug=<secret>&report=1 generates + emails a sample Gap
+    // Report synchronously and reports the outcome (so we can confirm the
+    // Claude generation + Resend send work, independent of the background path).
+    let gapReportTest;
+    if (req.query && req.query.report === "1") {
+      const samplePayload = {
+        input: { company: "Diagnostic Co", website: "example.com", name: "Diag Founder", email: "diag@example.com", area: "plumbing", city: "Austin, TX" },
+        results: ENGINES.map((e) => ({ engine: e.key, name: e.name, vendor: e.vendor, tag: e.tag, classification: "excluded", score: 10, reason: "Diagnostic sample.", competitor: null, gap: "citations", gapLabel: GAPS.citations.label, gapFix: GAPS.citations.fix, live: true })),
+        summary: { overall: 10, recommended: 0, excluded: 4, topCompetitor: null, topCompetitorCount: 0, primaryGap: "Missing Citations" },
+        prompt: "Best plumbing companies in Austin, TX",
+      };
+      try {
+        if (!process.env.ANTHROPIC_API_KEY) gapReportTest = { ran: false, error: "no ANTHROPIC_API_KEY" };
+        else if (!process.env.RESEND_API_KEY) gapReportTest = { ran: false, error: "no RESEND_API_KEY" };
+        else {
+          const html = stripFence(await callAnthropicReport(process.env.ANTHROPIC_API_KEY, gapReportPrompt(samplePayload)));
+          gapReportTest = { generated: !!html, htmlChars: html.length };
+          await emailGapReport(html, samplePayload);
+          gapReportTest.emailed = true;
+          gapReportTest.note = "sent to " + FOUNDER_EMAIL;
+        }
+      } catch (e) {
+        gapReportTest = gapReportTest || {};
+        gapReportTest.error = String((e && e.message) || e).slice(0, 220);
+      }
+    }
+
     res.status(200).json({
       ok: true,
       node: process.version,
@@ -441,6 +468,7 @@ module.exports = async function handler(req, res) {
       webhookSecretSet: !!process.env.SHEET_WEBHOOK_SECRET,
       resendKeySet: !!process.env.RESEND_API_KEY,
       webhook,
+      gapReportTest,
       diagnostics,
     });
     return;
