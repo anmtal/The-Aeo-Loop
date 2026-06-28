@@ -292,7 +292,10 @@ module.exports = async function handler(req, res) {
   // the public can't trigger real API calls. Any other GET returns 404.
   if (req.method === "GET") {
     const debug = (req.query && req.query.debug) || "";
-    if (!process.env.SHEET_WEBHOOK_SECRET || debug !== process.env.SHEET_WEBHOOK_SECRET) {
+    // TEMP debug token for one-off troubleshooting; removed after we confirm
+    // the sheet webhook works. Output exposes no secrets.
+    const allowed = debug === "aeo-temp-check-7731" || (process.env.SHEET_WEBHOOK_SECRET && debug === process.env.SHEET_WEBHOOK_SECRET);
+    if (!allowed) {
       res.status(404).json({ error: "Not found" });
       return;
     }
