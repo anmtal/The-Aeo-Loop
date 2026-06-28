@@ -425,6 +425,16 @@ textarea:-webkit-autofill:focus {
 .versus__col--new p { color: var(--on-ink-2); }
 .versus__col b { color: var(--accent-br); font-weight: 600; }
 
+/* ---------- sample report ---------- */
+.report-hero { display: flex; flex-wrap: wrap; gap: 24px 40px; align-items: center; background: var(--ink-soft); border: 1px solid var(--ink-line); border-radius: var(--r); padding: 28px 30px; box-shadow: var(--glow); margin-top: 26px; }
+.report-hero__score { font-family: var(--display); font-weight: 800; font-size: clamp(3.2rem, 8vw, 4.6rem); line-height: .85; color: var(--v-exc); }
+.report-hero__score small { display: block; font-family: var(--mono); font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--v-exc); margin-top: 10px; }
+.report-hero__facts { display: grid; gap: 7px; font-size: 14.5px; color: var(--on-ink-2); }
+.report-hero__facts b { color: var(--on-ink); font-weight: 600; }
+.report-banner { display: flex; gap: 12px; align-items: flex-start; background: rgba(26,214,160,.06); border: 1px solid rgba(26,214,160,.32); border-radius: 12px; padding: 15px 18px; font-size: 14.5px; line-height: 1.55; color: var(--on-ink-2); margin-top: 22px; }
+.report-banner b { color: var(--on-ink); }
+.report-banner svg { flex: none; margin-top: 1px; }
+
 /* ---------- founder / about ---------- */
 .founder { display: grid; grid-template-columns: 300px 1fr; gap: clamp(28px, 4vw, 56px); align-items: start; }
 @media (max-width: 760px) { .founder { grid-template-columns: 1fr; } }
