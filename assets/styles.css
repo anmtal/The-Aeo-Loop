@@ -401,6 +401,8 @@ textarea:-webkit-autofill:focus {
 .faq__q { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 20px; font-family: var(--display); font-weight: 700; font-size: 1.06rem; color: var(--on-ink); }
 .faq__q::-webkit-details-marker { display: none; }
 .faq__q:hover { color: var(--accent-br); }
+.faq__q:focus-visible { outline: none; }
+.faq__item:focus-within { border-color: var(--accent-br); }
 .faq__icon { flex: none; width: 18px; height: 18px; position: relative; }
 .faq__icon::before, .faq__icon::after { content: ""; position: absolute; background: var(--accent-br); border-radius: 2px; transition: transform .2s ease, opacity .2s ease; }
 .faq__icon::before { top: 8px; left: 0; width: 18px; height: 2px; }
