@@ -270,7 +270,7 @@
     function fetchScan(input) {
       return new Promise(function (resolve, reject) {
         var controller = new AbortController();
-        var t = setTimeout(function () { controller.abort(); }, 25000);
+        var t = setTimeout(function () { controller.abort(); }, 45000);
         fetch("/api/scan", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
