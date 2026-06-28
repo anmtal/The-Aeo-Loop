@@ -156,15 +156,24 @@ async function callGemini(key, sys, user) {
   const models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
   let lastStatus = 0;
   for (let i = 0; i < models.length; i++) {
+    const model = models[i];
+    const generationConfig = {
+      temperature: 0.2,
+      maxOutputTokens: 700,
+      responseMimeType: "application/json",
+    };
+    // 2.5 models "think" by default and can burn the token budget before
+    // emitting the answer; disable thinking so the full budget is the JSON.
+    if (model.indexOf("2.5") !== -1) generationConfig.thinkingConfig = { thinkingBudget: 0 };
     const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${models[i]}:generateContent?key=${encodeURIComponent(key)}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           system_instruction: { parts: [{ text: sys }] },
           contents: [{ role: "user", parts: [{ text: user }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 300, responseMimeType: "application/json" },
+          generationConfig,
         }),
       }
     );
