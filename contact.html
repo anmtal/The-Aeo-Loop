@@ -89,6 +89,7 @@
             <div class="err" role="alert"></div>
           </div>
           <input type="text" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAADsWbQ6FdM9XB5kl" data-theme="dark"></div>
           <button class="btn btn--primary btn--lg" type="submit" data-contact-submit style="width:100%;justify-content:center">
             <span data-clabel>Send message</span> <span class="arr">→</span>
           </button>
@@ -124,6 +125,7 @@
   </div>
 </footer>
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <script src="assets/app.js?v=3" defer></script>
 <script>
@@ -153,17 +155,21 @@
     if(!ok){ f.querySelector('[aria-invalid="true"]').focus(); return; }
 
     btn.disabled = true; if(label) label.textContent = "Sending…";
-    var payload = { name:name, email:email, company:company, message:msg, hp: (f.hp ? f.hp.value : "") };
+    var tsEl = f.querySelector('[name="cf-turnstile-response"]');
+    var payload = { name:name, email:email, company:company, message:msg, hp: (f.hp ? f.hp.value : ""), turnstileToken: (tsEl ? tsEl.value : "") };
 
     fetch("/api/contact", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) })
-      .then(function(r){ if(!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function(r){ if(!r.ok){ var e=new Error("status "+r.status); e.status=r.status; throw e; } return r.json(); })
       .then(function(){
         f.reset();
         if(label) label.textContent = "Message sent ✓";
         if(note) note.textContent = "Thanks — your message is on its way. We'll reply to you personally, usually within a day.";
       })
-      .catch(function(){
+      .catch(function(err){
         btn.disabled = false; if(label) label.textContent = "Send message";
+        if(window.turnstile){ try{ window.turnstile.reset(); }catch(_){} }
+        if(err && err.status === 403){ if(note) note.textContent = "We couldn't verify that request — please try again."; return; }
+        if(err && err.status === 429){ if(note) note.textContent = "Too many messages right now — please try again later, or email us directly."; return; }
         if(note) note.textContent = "We couldn't send it automatically — opening your email app instead.";
         mailtoFallback(name,email,company,msg);
       });

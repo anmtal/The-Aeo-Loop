@@ -6,6 +6,8 @@
 const TO = "contact@theaeoloop.com";
 const FROM = "The AEO Loop <contact@theaeoloop.com>";
 
+const { clientIp, parseBody, verifyTurnstile, rateLimit } = require("../lib/guard");
+
 function esc(s) {
   return String(s || "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
 }
@@ -16,12 +18,20 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  let body = req.body;
-  if (typeof body === "string") { try { body = JSON.parse(body); } catch (_) { body = {}; } }
-  body = body || {};
+  const ip = clientIp(req);
+  const body = parseBody(req);
 
   // Honeypot: bots fill the hidden "hp" field. Pretend success, send nothing.
   if (body.hp) { res.status(200).json({ ok: true }); return; }
+
+  // Same abuse protection as the scanner (env-gated). Turnstile blocks bots;
+  // the rate limit (its own "contact" bucket) caps how many messages per IP/day.
+  if (process.env.TURNSTILE_SECRET_KEY) {
+    const ok = await verifyTurnstile(process.env.TURNSTILE_SECRET_KEY, body.turnstileToken || "", ip);
+    if (!ok) { res.status(403).json({ error: "Verification failed — please retry." }); return; }
+  }
+  const rl = await rateLimit(ip, "contact", 8, 500);
+  if (!rl.ok) { res.status(429).json({ error: "Too many messages. Please try again later." }); return; }
 
   const name = String(body.name || "").slice(0, 120).trim();
   const email = String(body.email || "").slice(0, 160).trim();
