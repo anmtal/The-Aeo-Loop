@@ -420,3 +420,39 @@ textarea:-webkit-autofill:focus {
 
 .skip { position: absolute; left: -999px; top: 0; background: var(--accent); color: #04130E; padding: 10px 16px; border-radius: 0 0 8px 0; z-index: 100; }
 .skip:focus { left: 0; }
+
+/* ============================ neon accents ============================
+   A light neon layer over the dark theme: glowing logo, accent words,
+   CTAs, and card edges. Kept subtle so text stays readable. */
+.brand__glyph { filter: drop-shadow(0 0 5px rgba(26,214,160,.55)); }
+
+.eyebrow { text-shadow: 0 0 16px rgba(26,214,160,.35); }
+.hero h1 .em { text-shadow: 0 0 26px rgba(26,214,160,.45), 0 0 8px rgba(26,214,160,.35); }
+
+.btn--primary {
+  box-shadow: 0 0 0 1px rgba(26,214,160,.35), 0 8px 26px -8px rgba(16,168,126,.7), 0 0 20px rgba(26,214,160,.28);
+}
+.btn--primary:hover {
+  box-shadow: 0 0 0 1px rgba(26,214,160,.6), 0 12px 34px -8px rgba(26,214,160,.85), 0 0 30px rgba(26,214,160,.5);
+}
+
+.card:hover {
+  border-color: var(--accent-br);
+  box-shadow: 0 0 0 1px rgba(26,214,160,.22), 0 0 26px -6px rgba(26,214,160,.4), var(--shadow);
+}
+
+.scanform { box-shadow: var(--shadow-lg), 0 0 46px -18px rgba(26,214,160,.4); }
+.scanpanel { box-shadow: var(--shadow-lg), 0 0 46px -20px rgba(26,214,160,.32); }
+
+.tier--hero { box-shadow: var(--glow), 0 0 56px -20px rgba(26,214,160,.5); }
+.cta-band { box-shadow: var(--glow), 0 0 62px -22px rgba(26,214,160,.45); }
+
+.billing-toggle__opt.is-active, .tier__flag { box-shadow: 0 0 16px rgba(26,214,160,.45); }
+.field input:focus, .field textarea:focus { box-shadow: 0 0 0 3px rgba(26,214,160,.22), 0 0 18px -2px rgba(26,214,160,.35); }
+
+/* faint glowing hairline between stacked sections */
+.section + .section { border-top: 1px solid rgba(26,214,160,.09); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .dot { box-shadow: 0 0 8px rgba(26,214,160,.7); }
+}
