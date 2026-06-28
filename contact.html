@@ -68,10 +68,11 @@
               <textarea id="c-msg" name="message" rows="4" placeholder="I ran the scanner and want to talk through my results…" style="font-family:var(--body);font-size:15.5px;color:var(--on-ink);background:#0a121b;border:1px solid var(--ink-line);border-radius:10px;padding:13px 14px;width:100%;resize:vertical"></textarea>
               <div class="err" role="alert"></div>
             </div>
+            <input type="text" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
             <button class="btn btn--primary btn--lg" type="submit" data-contact-submit style="width:100%;justify-content:center">
               <span data-clabel>Send message</span> <span class="arr">→</span>
             </button>
-            <p class="consent" data-contact-note>This opens your email client addressed to contact@theaeoloop.com with your message pre-filled. No data is stored on this page.</p>
+            <p class="consent" data-contact-note>Your message is sent straight to contact@theaeoloop.com and we reply from a person, not a no-reply.</p>
           </form>
         </div>
       </div>
@@ -106,24 +107,46 @@
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 <script src="assets/app.js?v=2" defer></script>
 <script>
-/* Contact form → mailto (no backend, no data stored) */
+/* Contact form → POST /api/contact (Resend). Falls back to mailto on failure. */
 (function(){
   var f = document.querySelector("[data-contact-form]");
   if(!f) return;
+  var btn = f.querySelector("[data-contact-submit]");
+  var label = f.querySelector("[data-clabel]");
+  var note = document.querySelector("[data-contact-note]");
+
+  function mark(input,bad){ var fld=input.closest(".field"); var er=fld?fld.querySelector(".err"):null; input.setAttribute("aria-invalid",String(bad)); if(er) er.textContent= bad ? "This field is required." : ""; return !bad; }
+
+  function mailtoFallback(name,email,company,msg){
+    var subject = encodeURIComponent("AEO Loop enquiry — " + (company||name));
+    var body = encodeURIComponent(msg + "\n\n— " + name + (company? " · "+company : "") + "\n" + email);
+    window.location.href = "mailto:contact@theaeoloop.com?subject="+subject+"&body="+body;
+  }
+
   f.addEventListener("submit", function(e){
     e.preventDefault();
     var name=f.name.value.trim(), email=f.email.value.trim(), company=f.company.value.trim(), msg=f.message.value.trim();
     var ok=true;
-    function mark(input,bad){ var er=input.closest(".field").querySelector(".err"); input.setAttribute("aria-invalid",String(bad)); if(er) er.textContent= bad ? "This field is required." : ""; if(bad) ok=false; }
-    mark(f.name, name.length<2);
-    mark(f.email, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
-    mark(f.message, msg.length<5);
+    if(!mark(f.name, name.length<2)) ok=false;
+    if(!mark(f.email, !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) ok=false;
+    if(!mark(f.message, msg.length<5)) ok=false;
     if(!ok){ f.querySelector('[aria-invalid="true"]').focus(); return; }
-    var subject = encodeURIComponent("AEO Loop enquiry — " + (company||name));
-    var body = encodeURIComponent(msg + "\n\n— " + name + (company? " · "+company : "") + "\n" + email);
-    window.location.href = "mailto:contact@theaeoloop.com?subject="+subject+"&body="+body;
-    var note=document.querySelector("[data-contact-note]");
-    if(note) note.textContent = "Your email client should now be open with the message ready to send.";
+
+    btn.disabled = true; if(label) label.textContent = "Sending…";
+    var payload = { name:name, email:email, company:company, message:msg, hp: (f.hp ? f.hp.value : "") };
+
+    fetch("/api/contact", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) })
+      .then(function(r){ if(!r.ok) throw new Error("bad status"); return r.json(); })
+      .then(function(){
+        f.reset();
+        if(label) label.textContent = "Message sent ✓";
+        if(note) note.textContent = "Thanks — your message is on its way. We'll reply to you personally, usually within a day.";
+      })
+      .catch(function(){
+        btn.disabled = false; if(label) label.textContent = "Send message";
+        if(note) note.textContent = "We couldn't send it automatically — opening your email app instead.";
+        mailtoFallback(name,email,company,msg);
+      });
   });
 })();
 </script>
