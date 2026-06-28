@@ -315,7 +315,11 @@ table.feat tr:last-child td { border-bottom: 0; }
 
 /* ---------- scanner form ---------- */
 .scanform { background: var(--ink-soft); border: 1px solid var(--ink-line); border-radius: 18px; padding: clamp(22px, 3vw, 34px); box-shadow: var(--shadow-lg); }
-.cf-turnstile { max-width: 100%; overflow: hidden; margin: 4px 0 16px; }
+/* Invisible Turnstile leaves no visible box; collapse its spacing so there's
+   no empty gap above the button. (If switched back to a visible mode, the
+   button's own top margin still provides separation.) */
+.cf-turnstile { max-width: 100%; overflow: hidden; margin: 0; }
+.cf-turnstile:empty { display: none; }
 .field { display: grid; gap: 7px; margin-bottom: 16px; }
 .field label { font-size: 13.5px; font-weight: 600; color: var(--on-ink); }
 .field .hint { font-size: 12.5px; color: var(--on-ink-2); font-weight: 400; }
