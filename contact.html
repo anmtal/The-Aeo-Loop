@@ -39,6 +39,7 @@
           <span class="eyebrow">Contact</span>
           <h1 class="h-xl" style="margin-top:16px">Let's talk about what your scan turned up.</h1>
           <p class="lede" style="margin-top:18px">The best conversations start after you've run the scanner — you've already seen your score, who's beating you, and your biggest gap. From there it's just scope and fit.</p>
+          <p class="muted" style="margin-top:18px;font-size:15px">Grab a 30-minute slot that works for you — you'll get a calendar invite and a video link automatically. Prefer to write? <a href="#message" style="color:var(--accent-br);font-weight:600">Send a message instead →</a></p>
           <div class="card" style="margin-top:28px;max-width:420px">
             <div class="card__n">Email</div>
             <h3 style="margin:8px 0 4px"><a href="mailto:contact@theaeoloop.com" style="color:var(--accent-br)">contact@theaeoloop.com</a></h3>
@@ -48,7 +49,25 @@
         </div>
 
         <div class="reveal">
-          <form class="scanform" data-contact-form novalidate aria-label="Contact form">
+          <div class="cal-embed">
+            <div class="calendly-inline-widget" data-url="https://calendly.com/theaeoloop/30min?hide_gdpr_banner=1&background_color=0a0e15&text_color=e9eef3&primary_color=10a87e" style="min-width:300px;height:690px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- message form (secondary) -->
+  <section class="section section--paper" id="message">
+    <div class="wrap">
+      <div class="section-head reveal" style="max-width:60ch">
+        <span class="eyebrow">Prefer to write?</span>
+        <h2 class="h-md" style="margin-top:12px">Send a message instead.</h2>
+        <p class="lede" style="margin-top:14px">Not ready to pick a time? Send a note and we'll reply personally — usually within a day.</p>
+      </div>
+      <div class="reveal" style="max-width:640px">
+        <form class="scanform" data-contact-form novalidate aria-label="Contact form">
+          <div class="form-row">
             <div class="field">
               <label for="c-name">Your name</label>
               <input id="c-name" name="name" type="text" autocomplete="name" placeholder="Jordan Reyes">
@@ -59,22 +78,22 @@
               <input id="c-email" name="email" type="email" autocomplete="email" placeholder="jordan@yourfirm.com">
               <div class="err" role="alert"></div>
             </div>
-            <div class="field">
-              <label for="c-company">Company <span class="hint">optional</span></label>
-              <input id="c-company" name="company" type="text" autocomplete="organization" placeholder="Your firm">
-            </div>
-            <div class="field">
-              <label for="c-msg">What would you like to cover?</label>
-              <textarea id="c-msg" name="message" rows="4" placeholder="I ran the scanner and want to talk through my results…" style="font-family:var(--body);font-size:15.5px;color:var(--on-ink);background:#0a121b;border:1px solid var(--ink-line);border-radius:10px;padding:13px 14px;width:100%;resize:vertical"></textarea>
-              <div class="err" role="alert"></div>
-            </div>
-            <input type="text" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-            <button class="btn btn--primary btn--lg" type="submit" data-contact-submit style="width:100%;justify-content:center">
-              <span data-clabel>Send message</span> <span class="arr">→</span>
-            </button>
-            <p class="consent" data-contact-note>Your message is sent straight to contact@theaeoloop.com and we reply from a person, not a no-reply.</p>
-          </form>
-        </div>
+          </div>
+          <div class="field">
+            <label for="c-company">Company <span class="hint">optional</span></label>
+            <input id="c-company" name="company" type="text" autocomplete="organization" placeholder="Your firm">
+          </div>
+          <div class="field">
+            <label for="c-msg">What would you like to cover?</label>
+            <textarea id="c-msg" name="message" rows="4" placeholder="I ran the scanner and want to talk through my results…"></textarea>
+            <div class="err" role="alert"></div>
+          </div>
+          <input type="text" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <button class="btn btn--primary btn--lg" type="submit" data-contact-submit style="width:100%;justify-content:center">
+            <span data-clabel>Send message</span> <span class="arr">→</span>
+          </button>
+          <p class="consent" data-contact-note>Your message is sent straight to contact@theaeoloop.com and we reply from a person, not a no-reply.</p>
+        </form>
       </div>
     </div>
   </section>
@@ -105,6 +124,7 @@
   </div>
 </footer>
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
 <script src="assets/app.js?v=2" defer></script>
 <script>
 /* Contact form → POST /api/contact (Resend). Falls back to mailto on failure. */

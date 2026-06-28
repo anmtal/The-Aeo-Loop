@@ -362,6 +362,10 @@ textarea:-webkit-autofill:focus {
 .summary__meta .big { font-family: var(--display); font-weight: 800; font-size: 1.4rem; color: var(--on-ink); }
 .summary__meta .row { font-size: 14px; color: var(--on-ink-2); }
 .summary__meta .row b { color: var(--on-ink); }
+/* Calendly embed wrapper */
+.cal-embed { border: 1px solid var(--ink-line); border-radius: 18px; overflow: hidden; background: var(--ink-soft); box-shadow: var(--shadow-lg); }
+.cal-embed .calendly-inline-widget { border-radius: 18px; }
+
 /* compact verdict legend shown alongside results */
 .legend-mini { display: grid; gap: 8px; margin-top: 18px; }
 .legend-mini__head { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); margin: 4px 2px 2px; }
