@@ -312,12 +312,42 @@ module.exports = async function handler(req, res) {
         }
       })
     );
+    // Live webhook test: POST a clearly-marked row and report the reply.
+    const webhook = { urlSet: !!process.env.SHEET_WEBHOOK_URL, secretSet: !!process.env.SHEET_WEBHOOK_SECRET };
+    if (process.env.SHEET_WEBHOOK_URL) {
+      try {
+        const wr = await fetch(process.env.SHEET_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          redirect: "follow",
+          body: JSON.stringify({
+            secret: process.env.SHEET_WEBHOOK_SECRET || "",
+            name: "Diagnostic", email: "diag@example.com",
+            company: "DIAGNOSTIC TEST — delete", website: "example.com",
+            city: "Test", area: "test", mode: "diagnostic",
+            overall: 0, recommended: 0, excluded: 0, topCompetitor: "", primaryGap: "",
+            chatgpt: "", gemini: "", grok: "", claude: "", prompt: "diagnostic",
+          }),
+        });
+        const text = await wr.text();
+        webhook.status = wr.status;
+        webhook.finalUrl = String(wr.url || "").slice(0, 80);
+        webhook.bodySample = text.slice(0, 180);
+        webhook.looksOk = /"ok"\s*:\s*true/.test(text);
+        webhook.looksUnauthorized = /unauthorized/i.test(text);
+        webhook.looksLikeLoginPage = /accounts\.google\.com|sign in|requires you to sign/i.test(text);
+      } catch (e) {
+        webhook.error = String((e && e.message) || e).slice(0, 180);
+      }
+    }
+
     res.status(200).json({
       ok: true,
       node: process.version,
       hasFetch: typeof fetch === "function",
       webhookUrlSet: !!process.env.SHEET_WEBHOOK_URL,
       webhookSecretSet: !!process.env.SHEET_WEBHOOK_SECRET,
+      webhook,
       diagnostics,
     });
     return;
