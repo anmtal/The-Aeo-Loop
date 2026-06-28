@@ -42,12 +42,12 @@ const GAPS = {
   dominance: { label: "Competitor Dominance", fix: "Targeted content and citation strategy against the dominant player." },
 };
 
+// Three distinct buying-intent angles (best / who-to-hire / top-recommended).
+// Kept at 3 to limit cost+latency, since each one is a grounded web search.
 const PROMPT_TEMPLATES = [
   (a, l) => `Best ${a} companies in ${l}`,
   (a, l) => `Who should I hire for ${a} services in ${l}?`,
   (a, l) => `Top recommended ${a} providers near ${l}`,
-  (a, l) => `Most trusted ${a} firms in ${l}`,
-  (a, l) => `${a} experts in ${l} — who stands out?`,
 ];
 
 /* OBSERVE: the buying-intent question we actually ask each engine — WITHOUT
@@ -83,8 +83,8 @@ function classifierPrompt(input, engineName) {
 }
 
 // Deterministic, classification-derived score: each state maps to a fixed
-// value (the midpoint of its band). A per-engine score is the AVERAGE of these
-// across the five prompts — so it derives entirely from the real classifications
+// value (the midpoint of its band). A per-engine score is simply that value for
+// the engine's classification — so it derives entirely from the real verdict
 // and is stable on re-scan. No randomness.
 const STATE_SCORE = { recommended: 82, mentioned: 52, cited: 44, competitor: 24, excluded: 11 };
 function scoreFor(state) { return STATE_SCORE[state] != null ? STATE_SCORE[state] : STATE_SCORE.excluded; }
@@ -350,7 +350,7 @@ function gapReportPrompt(payload) {
     ``,
     `SCAN DATA — the factual foundation. Build every section on this; do not invent data:`,
     `Company: ${input.company} | Website: ${input.website} | Area: ${input.area} | Location: ${input.city}`,
-    `Prompts used (five buying-intent queries per engine; scores are averaged): ${payload.prompt}`,
+    `Prompts used (three buying-intent queries per engine; the engine's own answers were observed and graded for the client's presence): ${payload.prompt}`,
     `Overall visibility: ${summary.overall}/100. Recommended on ${summary.recommended} engine(s), Excluded on ${summary.excluded}.`,
     `Most surfaced competitor: ${summary.topCompetitor || "none"}. Primary gap: ${summary.primaryGap || "n/a"}.`,
     `Per-engine results:`,
@@ -568,7 +568,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  // Build all five buying-intent prompts. Each engine is asked the real
+  // Build the buying-intent prompts. Each engine is asked the real
   // question (without naming the business), and a separate judge classifies
   // whether the business actually appears in the engine's answers.
   const prompts = PROMPT_TEMPLATES.map((t) => t(input.area, input.city));
