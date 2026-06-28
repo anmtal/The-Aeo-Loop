@@ -394,7 +394,11 @@ async function emailGapReport(html, payload) {
   const key = process.env.RESEND_API_KEY;
   if (!key) throw new Error("no RESEND_API_KEY");
   const { input, summary } = payload;
+  const demoWarn = payload.mode === "demo"
+    ? `<p style="font:14px/1.5 system-ui,sans-serif;color:#9a3412;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;margin:0 0 12px"><strong>⚠ Demo mode:</strong> the engines were unavailable for this scan, so these verdicts are illustrative — not live. Do not send this report to the client as-is.</p>`
+    : "";
   const intro =
+    demoWarn +
     `<p style="font:14px/1.5 system-ui,sans-serif;color:#444">` +
     `<strong>Draft Gap Report — review before sending.</strong><br>` +
     `Lead: ${esc(input.name)} &lt;${esc(input.email)}&gt; · ${esc(input.company)} · ${esc(input.area)} · ${esc(input.city)}<br>` +

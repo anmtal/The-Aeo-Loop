@@ -385,6 +385,8 @@ textarea:-webkit-autofill:focus {
 .gate { background: var(--card); border: 1px solid var(--card-line); border-radius: 16px; padding: 26px; margin-top: 18px; text-align: center; }
 .gate h3 { font-size: 1.3rem; }
 .gate p { color: var(--text-2); font-size: 15px; margin: 8px auto 0; max-width: 52ch; }
+.gate__reco { margin: 16px auto 0; max-width: 58ch; color: var(--text); font-size: 15px; line-height: 1.55; background: rgba(26,214,160,.09); border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent); border-radius: 12px; padding: 13px 16px; }
+.gate__reco b { color: var(--accent-br); font-weight: 600; }
 
 /* ---------- stat strip ---------- */
 .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 22px; }

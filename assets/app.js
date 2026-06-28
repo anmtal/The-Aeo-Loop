@@ -158,6 +158,16 @@
 
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
 
+  /* recommend a next step from the scan summary (shown on the results gate) */
+  function recommendFor(s) {
+    var rec;
+    if (s.overall < 30) rec = "Based on your results, we'd start with a one-time <b>Implementation</b> — your priority pages need the structural and entity fixes that get engines to cite and recommend you.";
+    else if (s.overall < 58) rec = "Based on your results, the <b>Growth</b> retainer is the fit — you're showing up but not yet recommended, and the ongoing loop is what closes that gap.";
+    else rec = "You're already surfacing across engines — the <b>Growth</b> retainer protects and compounds that as the models shift.";
+    if (s.topCompetitor) rec = "<b>" + escapeHtml(s.topCompetitor) + "</b> is being recommended where you should be. " + rec;
+    return rec;
+  }
+
   /* ============================ SCANNER PAGE ============================ */
   var form = document.querySelector("[data-scan-form]");
   if (form) initScanner(form);
@@ -293,8 +303,9 @@
       var co = resultsEl.querySelector("[data-company-label]");
       if (co) co.textContent = input.company;
 
-      // demo banner
-      if (demoFlag) demoFlag.style.display = (data.mode === "demo") ? "flex" : "none";
+      // dynamic next-step recommendation
+      var recoEl = resultsEl.querySelector("[data-reco]");
+      if (recoEl) { recoEl.innerHTML = recommendFor(s); recoEl.style.display = "block"; }
 
       var pre = document.querySelector("[data-pre]");
       if (pre) pre.style.display = "none";
