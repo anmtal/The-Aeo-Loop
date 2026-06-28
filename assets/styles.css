@@ -425,6 +425,24 @@ textarea:-webkit-autofill:focus {
 .versus__col--new p { color: var(--on-ink-2); }
 .versus__col b { color: var(--accent-br); font-weight: 600; }
 
+/* ---------- founder / about ---------- */
+.founder { display: grid; grid-template-columns: 300px 1fr; gap: clamp(28px, 4vw, 56px); align-items: start; }
+@media (max-width: 760px) { .founder { grid-template-columns: 1fr; } }
+.founder__card { background: var(--ink-soft); border: 1px solid var(--ink-line); border-radius: var(--r); padding: 28px 24px; text-align: center; box-shadow: var(--glow); }
+.founder__avatar { width: 132px; height: 132px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 2.7rem; color: #04130E; background: radial-gradient(circle at 30% 25%, var(--accent-br), var(--accent-deep)); box-shadow: 0 0 30px -6px rgba(26,214,160,.6); }
+.founder__name { font-family: var(--display); font-weight: 800; font-size: 1.5rem; color: var(--on-ink); }
+.founder__role { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-br); margin-top: 5px; }
+.founder__card .btn { margin-top: 18px; }
+.founder__story p { margin-bottom: 16px; font-size: 16px; line-height: 1.75; color: var(--on-ink-2); }
+.founder__story p:first-child { color: var(--on-ink); font-size: 18px; }
+.founder__story p:last-child { margin-bottom: 0; }
+
+.founder-strip { display: flex; align-items: center; gap: 20px; background: var(--card); border: 1px solid var(--card-line); border-radius: var(--r); padding: 22px 26px; max-width: 760px; box-shadow: var(--shadow); }
+@media (max-width: 560px) { .founder-strip { flex-direction: column; text-align: center; } }
+.founder-strip__avatar { flex: none; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 1.3rem; color: #04130E; background: radial-gradient(circle at 30% 25%, var(--accent-br), var(--accent-deep)); box-shadow: 0 0 22px -6px rgba(26,214,160,.55); }
+.founder-strip p { font-size: 15.5px; color: var(--text-2); line-height: 1.6; margin: 0; }
+.founder-strip b { color: var(--text); }
+
 /* ---------- CTA band ---------- */
 .cta-band { background: linear-gradient(180deg, var(--ink-soft), var(--ink)); border: 1px solid var(--ink-line); border-radius: 22px; padding: clamp(34px, 5vw, 60px); text-align: center; color: var(--on-ink); box-shadow: var(--glow); }
 .cta-band h2 { margin: 0 auto; max-width: 18ch; }
