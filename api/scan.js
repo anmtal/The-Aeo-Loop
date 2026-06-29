@@ -460,6 +460,37 @@ async function generateAndEmailGapReport(payload) {
   await emailGapReport(html, payload);
 }
 
+/* Automatic receipt to the client at scan time. Sets expectations that the
+ * full report is founder-reviewed and arrives within a day or two. Replies
+ * route to the founder. This is the only auto client-facing email; the report
+ * itself stays manual. */
+async function sendClientReceipt(payload) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return; // not configured yet — skip cleanly
+  const { input } = payload;
+  const first = String(input.name || "there").trim().split(/\s+/)[0];
+  const html =
+    `<div style="font:15px/1.6 -apple-system,system-ui,sans-serif;color:#1a1a1a;max-width:520px">` +
+    `<p>Hi ${esc(first)},</p>` +
+    `<p>Thanks for running ${esc(input.company)} through the scanner. I've got your results and I'm pulling the full report together now.</p>` +
+    `<p>I review every report myself before it goes out, so it won't arrive instantly. You'll have it within a day or two. It covers where you're showing up across ChatGPT, Gemini, Grok and Claude, who's getting recommended in your place, and the main reasons behind it.</p>` +
+    `<p>If anything comes up before then, just reply to this email. It comes straight to me.</p>` +
+    `<p style="margin-top:18px">Anmol<br><span style="color:#666">The AEO Loop</span></p>` +
+    `</div>`;
+  const r = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      from: FROM_EMAIL,
+      to: [input.email],
+      reply_to: FOUNDER_EMAIL,
+      subject: "Your AEO report is on the way",
+      html,
+    }),
+  });
+  if (!r.ok) throw new Error("receipt resend " + r.status + " " + (await r.text()).slice(0, 160));
+}
+
 module.exports = async function handler(req, res) {
   // ---- Health check: GET /api/scan?debug=<DEBUG_SECRET>. Gated by its OWN
   // secret (separate from the Google Sheet secret). By default it reports only
@@ -563,6 +594,7 @@ module.exports = async function handler(req, res) {
   res.status(200).json(payload);
 
   waitUntil((async () => {
+    try { await sendClientReceipt(payload); } catch (e) { console.error("client-receipt failed:", (e && e.message) || e); }
     try { await saveLead(payload); } catch (e) { console.error("saveLead failed:", (e && e.message) || e); }
     try { await generateAndEmailGapReport(payload); } catch (e) { console.error("gap-report failed:", (e && e.message) || e); }
   })());
