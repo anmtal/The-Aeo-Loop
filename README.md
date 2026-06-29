@@ -14,7 +14,7 @@ Marketing site + free **AI Visibility Scanner** for The AEO Loop, a managed Answ
 |------|-------|---------|
 | `index.html` | `/` | Home — the problem, the Loop, classification legend, pricing teaser |
 | `method.html` | `/method` | How it works — scanner architecture, scoring, gap categories, Gap Report |
-| `pricing.html` | `/pricing` | Implementation / Growth / Authority / Enterprise tiers |
+| `pricing.html` | `/pricing` | Foundation Build / Growth / Authority / Enterprise tiers |
 | `scanner.html` | `/scanner` | Free live AI Visibility Scanner |
 | `contact.html` | `/contact` | Contact form (mailto) |
 | `api/scan.js` | `/api/scan` | Serverless scanner endpoint |

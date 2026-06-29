@@ -399,8 +399,8 @@ function gapReportPrompt(payload) {
     `Sections in order: 1) Executive Summary 2) Inputs Used 3) AI Recommendation Coverage 4) Citation Coverage 5) Competitor Coverage 6) Authority Gaps 7) Structure Gaps 8) Prompt Intent Matrix 9) Off-site Authority Snapshot 10) Priority Fixes 11) Final Recommendation.`,
     ``,
     `CONFIDENTIALITY (critical): this is a diagnostic and strategic summary, NOT an implementation guide. Do NOT include copy-ready page drafts, step-by-step instructions, schema or JSON-LD code, the scanning prompt library, tool names, or platform-specific settings. Keep everything at the strategic / categorical level.`,
-    `PRIORITY FIXES guardrail: each fix names the CATEGORY of work and why it matters — never the method, tool, sequence, or output format. Correct example: "Your service pages lack the structured, extractable content engines need to cite you as a recommendation source. A paid implementation addresses this directly."`,
-    `Final Recommendation must route the client toward the Implementation package or Growth retainer, and include this caveat verbatim: "AI visibility is measured through repeated prompt sampling and should be read directionally; month-to-month change can reflect optimisation work, competitor activity, or platform updates."`,
+    `PRIORITY FIXES guardrail: each fix names the CATEGORY of work and why it matters — never the method, tool, sequence, or output format. Correct example: "Your service pages lack the structured, extractable content engines need to cite you as a recommendation source. A paid Foundation Build addresses this directly."`,
+    `Final Recommendation must route the client toward the Foundation Build package or Growth retainer, and include this caveat verbatim: "AI visibility is measured through repeated prompt sampling and should be read directionally; month-to-month change can reflect optimisation work, competitor activity, or platform updates."`,
     `Tone: confident, senior, concise. Keep each section tight (2–4 sentences or a short list); the whole report should read in a few minutes.`,
   ].join("\n");
 }
