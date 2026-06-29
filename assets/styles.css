@@ -381,8 +381,9 @@ textarea:-webkit-autofill:focus {
 .summary__meta .row { font-size: 14px; color: var(--on-ink-2); }
 .summary__meta .row b { color: var(--on-ink); }
 /* Calendly embed wrapper */
-.cal-embed { border: 1px solid var(--ink-line); border-radius: 18px; overflow: hidden; background: var(--ink-soft); box-shadow: var(--shadow-lg); }
-.cal-embed .calendly-inline-widget { border-radius: 18px; }
+.cal-embed { position: relative; min-height: 690px; border: 1px solid var(--ink-line); border-radius: 18px; overflow: hidden; background: var(--ink-soft); box-shadow: var(--shadow-lg); }
+.cal-embed::before { content: "Loading scheduler…"; position: absolute; inset: 0; z-index: 0; display: grid; place-items: center; font-family: var(--mono); font-size: 13px; letter-spacing: .04em; color: var(--text-2); }
+.cal-embed .calendly-inline-widget { position: relative; z-index: 1; border-radius: 18px; }
 
 /* compact verdict legend shown alongside results */
 .legend-mini { display: grid; gap: 8px; margin-top: 18px; }
