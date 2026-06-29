@@ -2,6 +2,7 @@
   "name": "the-aeo-loop",
   "private": true,
   "dependencies": {
-    "@vercel/functions": "latest"
+    "@vercel/functions": "latest",
+    "html-to-docx": "^1.8.0"
   }
 }

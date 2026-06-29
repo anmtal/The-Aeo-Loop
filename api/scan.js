@@ -437,17 +437,43 @@ async function emailGapReport(html, payload) {
     `Lead: ${esc(input.name)} &lt;${esc(input.email)}&gt; · ${esc(input.company)} · ${esc(input.area)} · ${esc(input.city)}<br>` +
     `Overall ${summary.overall}/100 · Recommended ${summary.recommended} · Excluded ${summary.excluded} · ` +
     `Top competitor: ${esc(summary.topCompetitor) || "none"} · Primary gap: ${esc(summary.primaryGap) || "n/a"}` +
-    `</p><hr>`;
+    `</p>`;
+
+  // Build a branded Word (.docx) from the report HTML and attach it. If anything
+  // fails, fall back to sending the report inline in the email body.
+  let attachments = null, bodyNote = "";
+  try {
+    const mod = require("html-to-docx");
+    const htmlToDocx = mod.default || mod;
+    const LOGO = require("./_logo");
+    const header =
+      `<p><img src="data:image/png;base64,${LOGO}" alt="The AEO Loop" width="190" /></p>` +
+      `<h1 style="color:#10A87E">AI Visibility Gap Report</h1>` +
+      (input.company ? `<p>Prepared for <strong>${esc(input.company)}</strong> &middot; ${esc(input.area)}, ${esc(input.city)}</p>` : "") +
+      `<p style="color:#666">Prepared by The AEO Loop &middot; theaeoloop.com</p><hr/>`;
+    const fullHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:Calibri,Arial,sans-serif">${header}${html}</body></html>`;
+    const out = await htmlToDocx(fullHtml, null, { table: { row: { cantSplit: true } }, footer: false, pageNumber: false });
+    const buf = Buffer.isBuffer(out) ? out : Buffer.from(out);
+    const safe = String(input.company || "Client").replace(/[^\w \-]+/g, "").trim().slice(0, 60) || "Client";
+    attachments = [{ filename: `AI Visibility Gap Report - ${safe}.docx`, content: buf.toString("base64") }];
+    bodyNote = `<hr><p style="font:14px/1.5 system-ui,sans-serif;color:#444">The full Gap Report is attached as a branded Word document — review or edit it, then send it on to the client.</p>`;
+  } catch (e) {
+    console.error("gap-report docx build failed, sending HTML body instead:", (e && e.message) || e);
+  }
+
+  const emailBody = {
+    from: FROM_EMAIL,
+    to: [FOUNDER_EMAIL],
+    reply_to: input.email,
+    subject: `Gap Report draft — ${input.company} (${summary.overall}/100)`,
+    html: attachments ? intro + bodyNote : intro + "<hr>" + html,
+  };
+  if (attachments) emailBody.attachments = attachments;
+
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    body: JSON.stringify({
-      from: FROM_EMAIL,
-      to: [FOUNDER_EMAIL],
-      reply_to: input.email,
-      subject: `Gap Report draft — ${input.company} (${summary.overall}/100)`,
-      html: intro + html,
-    }),
+    body: JSON.stringify(emailBody),
   });
   if (!r.ok) throw new Error("resend " + r.status + " " + (await r.text()).slice(0, 160));
 }
