@@ -161,13 +161,13 @@ async function observeOpenAI(key, query) {
   try {
     const r = await fetchT("https://api.openai.com/v1/responses", {
       method: "POST", headers: H,
-      body: JSON.stringify({ model: "gpt-4o-mini", tools: [{ type: "web_search" }], input: observeInstruction(query), max_output_tokens: 700 }),
-    }, 11000);
+      body: JSON.stringify({ model: "gpt-4o", tools: [{ type: "web_search" }], input: observeInstruction(query), max_output_tokens: 700 }),
+    }, 13000);
     if (r.ok) { const t = responsesText(await r.json()); if (t && t.trim()) return t; }
   } catch (_) {}
   const r2 = await fetchT("https://api.openai.com/v1/chat/completions", {
     method: "POST", headers: H,
-    body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "user", content: observeInstruction(query) }], max_tokens: 600, temperature: 0.3 }),
+    body: JSON.stringify({ model: "gpt-4o", messages: [{ role: "user", content: observeInstruction(query) }], max_tokens: 600, temperature: 0.3 }),
   }, 8000);
   if (!r2.ok) throw new Error("openai " + r2.status);
   return (await r2.json()).choices?.[0]?.message?.content || "";

@@ -50,16 +50,16 @@
 
       <div class="report-banner reveal" role="note">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 10V8a6 6 0 1 1 12 0v2" stroke="#1AD6A0" stroke-width="2" stroke-linecap="round"/><rect x="4" y="10" width="16" height="10" rx="2" stroke="#1AD6A0" stroke-width="2"/></svg>
-        <div><b>Redacted sample.</b> The client's name is shown as “the practice” and surfaced rivals as “Competitor A–D.” Nothing in the analysis has been softened — only identities are hidden.</div>
+        <div><b>Redacted sample.</b> The client's name is shown as “the practice” and surfaced rivals as “Competitor A–C.” Nothing in the analysis has been softened — only identities are hidden.</div>
       </div>
 
       <div class="report-hero reveal">
-        <div class="report-hero__score">11<small>/ 100 · critical</small></div>
+        <div class="report-hero__score">25<small>/ 100 · critical</small></div>
         <div class="report-hero__facts">
-          <div><b>Business:</b> a New York plastic-surgery practice <span style="color:var(--text-2)">(identity withheld)</span></div>
-          <div><b>Market:</b> plastic surgery · New York</div>
+          <div><b>Business:</b> a Manhattan plastic-surgery practice <span style="color:var(--text-2)">(identity withheld)</span></div>
+          <div><b>Market:</b> plastic surgery · Manhattan</div>
           <div><b>Engines tested:</b> ChatGPT · Gemini · Grok · Claude</div>
-          <div><b>Result:</b> <span class="badge is-line badge--exc">Excluded</span> on all four</div>
+          <div><b>Result:</b> <span class="badge is-line badge--men">Mentioned</span> on 1 of 4 · <span class="badge is-line badge--exc">Excluded</span> on 3</div>
         </div>
       </div>
     </div>
@@ -70,64 +70,79 @@
       <div class="legal reveal" style="max-width:60rem">
 
         <h2>1 · Executive summary</h2>
-        <p>The practice currently has <strong>no presence in AI-generated recommendations</strong> across four major conversational AI engines (ChatGPT, Gemini, Grok, Claude), despite operating in a high-intent market segment where patients actively seek plastic-surgery providers in New York. A visibility score of <strong>11/100</strong> reflects systematic exclusion rather than marginal ranking — competitors are surfaced repeatedly while the practice is never mentioned, cited, or recommended. This gap is not a ranking issue; it is a discovery and citation problem rooted in how AI engines identify, extract, and recommend trustworthy service providers.</p>
+        <p>The practice achieves a <strong>25/100</strong> visibility score across four major AI recommendation engines, with presence in only one (Gemini) and exclusion from three (ChatGPT, Grok, Claude). The dominant gap is <strong>competitor dominance</strong>: named rivals — shown here as Competitors A–C — are systematically surfaced where the practice is not. This indicates the practice lacks the structured, citation-ready content and off-site authority signals that modern AI systems require to position it as a credible recommendation source.</p>
 
         <h2>2 · How the scan ran</h2>
-        <p>Five high-intent prompts were tested across all four engines, each designed to capture buyer behaviour at the moment of provider selection:</p>
+        <p>Three high-intent buying prompts were tested across all four engines, each designed to capture buyer behaviour at the moment of provider selection:</p>
         <ul>
-          <li>Best plastic surgery companies in New York</li>
-          <li>Who should I hire for plastic surgery services in New York?</li>
-          <li>Top recommended plastic surgery providers near New York</li>
-          <li>Most trusted plastic surgery firms in New York</li>
-          <li>Plastic surgery experts in New York — who stands out?</li>
+          <li>Best plastic surgery companies in Manhattan</li>
+          <li>Who should I hire for plastic surgery services in Manhattan?</li>
+          <li>Top recommended plastic surgery providers near Manhattan</li>
         </ul>
-        <p>Each prompt was run against every engine. Rather than guessing, we <strong>read the actual answer each engine returned</strong> and graded whether the practice appeared — recommended, mentioned, cited, displaced by a competitor, or excluded. All prompts target direct decision-intent and geographic specificity. <em>(The free scanner samples a subset of these prompts; the full Gap Report runs the complete set.)</em></p>
+        <p>Rather than guessing, we <strong>read the actual answer each engine returned</strong> and graded the practice 0–100 on visibility, recommendation status, and competitive positioning — recommended, mentioned, cited, displaced by a competitor, or excluded.</p>
 
         <h2>3 · AI recommendation coverage</h2>
-        <p>The practice received <strong>zero recommendations</strong> across all four engines. The following competitors were surfaced instead:</p>
+        <p>The practice appears as a <strong>mentioned</strong> entity in only one of four engines (Gemini, 52/100) and is entirely <strong>excluded</strong> from three. Where it does appear, the reference is functional — a brief service mention — rather than a recommendation:</p>
         <div class="tbl-scroll" style="margin:18px 0">
           <table class="feat">
-            <thead><tr><th>Engine</th><th>Score</th><th>Competitor surfaced</th><th>Status</th></tr></thead>
+            <thead><tr><th>Engine</th><th>Score</th><th>Status</th></tr></thead>
             <tbody>
-              <tr><td>ChatGPT <span style="color:var(--text-2)">(OpenAI)</span></td><td>11/100</td><td>Competitor A</td><td><span class="badge is-line badge--exc">Excluded</span></td></tr>
-              <tr><td>Gemini <span style="color:var(--text-2)">(Google)</span></td><td>11/100</td><td>Competitor B</td><td><span class="badge is-line badge--exc">Excluded</span></td></tr>
-              <tr><td>Grok <span style="color:var(--text-2)">(xAI)</span></td><td>11/100</td><td>Competitor C</td><td><span class="badge is-line badge--exc">Excluded</span></td></tr>
-              <tr><td>Claude <span style="color:var(--text-2)">(Anthropic)</span></td><td>11/100</td><td>Competitor D</td><td><span class="badge is-line badge--exc">Excluded</span></td></tr>
+              <tr><td>ChatGPT <span style="color:var(--text-2)">(OpenAI)</span></td><td>11/100</td><td><span class="badge is-line badge--exc">Excluded</span></td></tr>
+              <tr><td>Gemini <span style="color:var(--text-2)">(Google)</span></td><td>52/100</td><td><span class="badge is-line badge--men">Mentioned</span></td></tr>
+              <tr><td>Grok <span style="color:var(--text-2)">(xAI)</span></td><td>11/100</td><td><span class="badge is-line badge--exc">Excluded</span></td></tr>
+              <tr><td>Claude <span style="color:var(--text-2)">(Anthropic)</span></td><td>24/100</td><td><span class="badge is-line badge--comp">Competitor Surfaced</span></td></tr>
             </tbody>
           </table>
         </div>
-        <p>The consistency of exclusion across independent platforms points to a structural visibility problem rather than engine-specific bias.</p>
+        <p>Across all engines, competitors receive named recommendations; the practice receives a functional mention at best.</p>
 
         <h2>4 · Citation coverage</h2>
-        <p>The practice was not named, mentioned, cited, or referenced in any response across any engine. Competing practices received explicit recommendation language, detailed descriptions, and positioning as trusted providers. The absence of citation is absolute — the practice does not appear even as a secondary mention, alternative, or contextual reference.</p>
+        <p>The practice is not positioned as a primary recommendation source in any engine result. Where it is mentioned (Gemini), the citation lacks the evaluative language — "leading," "highly-regarded," "specialises in" — that signals trustworthiness to end users. This suggests the web presence does not currently provide the extractable, evaluative content that AI systems need to cite it with confidence.</p>
 
         <h2>5 · Competitor coverage</h2>
-        <p>Four distinct competitors were identified as the primary surfaced alternatives across the engine landscape. Each appears to benefit from at least one engine's recommendation set, suggesting they have achieved sufficient structured visibility, third-party citation, or authority signalling for AI systems to include them in response generation. The fact that different engines surface different competitors indicates no single rival has saturated all four platforms — an opportunity gap for the practice.</p>
+        <p>Across the four engines, a small set of named rivals is surfaced repeatedly in the practice's place:</p>
+        <div class="tbl-scroll" style="margin:18px 0">
+          <table class="feat">
+            <thead><tr><th>Engine</th><th>Primary competitor surfaced</th><th>Competitors named</th></tr></thead>
+            <tbody>
+              <tr><td>ChatGPT <span style="color:var(--text-2)">(OpenAI)</span></td><td>Competitor A</td><td>4+</td></tr>
+              <tr><td>Gemini <span style="color:var(--text-2)">(Google)</span></td><td>Competitor B</td><td>Multiple</td></tr>
+              <tr><td>Grok <span style="color:var(--text-2)">(xAI)</span></td><td>Competitor C</td><td>Multiple</td></tr>
+              <tr><td>Claude <span style="color:var(--text-2)">(Anthropic)</span></td><td>Competitor C</td><td>Multiple</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>All four engines prioritise named competitors over the practice. This pattern indicates that competing practices have stronger authority signals, more detailed web content, or higher third-party citation density.</p>
 
         <h2>6 · Authority gaps</h2>
-        <p>AI recommendation systems prioritise providers that demonstrate extractable authority signals: verifiable credentials, third-party citations from medical directories, press coverage, and institutional affiliations. The practice's current digital footprint likely lacks the structured, machine-readable signals these engines use to validate and recommend service providers. Without them, even high-quality descriptions on its own website remain invisible to recommendation algorithms.</p>
+        <p>The practice shows weak third-party endorsement signals. Competitors appear to benefit from a higher density of mentions in review platforms, medical directories, press coverage, and professional listings that AI engines draw on. Without comparable authority anchors, even excellent on-site content will struggle to compete for recommendation placement.</p>
 
         <h2>7 · Structure gaps</h2>
-        <p>The website and content do not appear to be formatted in ways that let AI systems easily extract, verify, and cite credentials, specialties, patient outcomes, or institutional authority. This includes the absence of structured metadata, third-party endorsements, and strategic positioning within the information networks these engines crawl and reference. The gap is not the visibility of the website itself — it is the discoverability and citability of the practice as a recommended provider.</p>
+        <p>Content on the site likely lacks the semantic structure and extractable detail — credentials, specialties, patient outcomes, service descriptions — that modern AI systems require to parse and cite the practice as a credible source. Competitors' pages appear to present this information in ways that are more accessible to both AI indexing and direct user comprehension.</p>
 
         <h2>8 · Prompt-intent matrix</h2>
-        <p>All five prompts target the same user intent: active provider selection in a high-stakes, trust-dependent category. A provider with strong citation presence would expect to be recommended in at least two to four of five identical intent tests; a presence of zero indicates the practice is not yet integrated into any engine's recommendation knowledge base.</p>
+        <div class="tbl-scroll" style="margin:18px 0">
+          <table class="feat">
+            <thead><tr><th>Prompt</th><th>Engines ranking competitors</th><th>Practice visibility</th></tr></thead>
+            <tbody>
+              <tr><td>Best plastic surgery companies in Manhattan</td><td>4 / 4</td><td>Mentioned (Gemini only)</td></tr>
+              <tr><td>Who should I hire for plastic surgery services in Manhattan?</td><td>4 / 4</td><td>Excluded</td></tr>
+              <tr><td>Top recommended plastic surgery providers near Manhattan</td><td>4 / 4</td><td>Excluded</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>All three high-intent queries surface competitors. The practice's single appearance is in the broadest prompt, suggesting weak specialist positioning and low salience for decision-intent queries.</p>
 
         <h2>9 · Off-site authority snapshot</h2>
-        <p>The competitive landscape shows that multiple New York–based plastic-surgery practices have achieved enough third-party recognition and authority signalling to be included in AI recommendations. This establishes that the market segment itself is actively indexed and that engines are configured to surface plastic-surgery providers. The barrier here is not market coverage — it is individual practice visibility and citation authority.</p>
+        <p>The practice does not appear to command the third-party mention density, review volume, or professional citations that would elevate it above competitors in AI results. This is an upstream visibility issue: without external authority signals, on-site optimisation alone will not move recommendation rankings.</p>
 
         <h2>10 · Priority fixes</h2>
-        <p>The following categories of work will directly impact AI visibility:</p>
-        <ul>
-          <li><strong>Structured credential &amp; specialisation mapping</strong> — credentials, board certifications, specialties, and treatment outcomes formatted so AI systems can extract and verify them as authoritative signals. Engines cannot recommend what they cannot reliably identify and validate.</li>
-          <li><strong>Third-party citation authority</strong> — presence within medical directories, healthcare review platforms, and professional networks that AI systems treat as authoritative. Engines prioritise providers cited by external, trusted sources over self-reported information.</li>
-          <li><strong>Service-page architecture</strong> — structured, extractable content engines need to cite the practice when patients ask for specific procedure expertise. This directly affects whether it appears in intent-matched queries.</li>
-          <li><strong>Institutional &amp; practitioner authority signals</strong> — board certification, fellowship training, professional affiliations, and published outcomes featured and formatted for both human and machine readability.</li>
-          <li><strong>Local-market positioning</strong> — integrated positioning within New York's healthcare authority ecosystem so location-specific queries trigger inclusion.</li>
-        </ul>
+        <p><strong>Fix 1 · Structured content authority (critical).</strong> The service and credential pages lack the semantic, extractable information AI engines require to position the practice as a recommendation source. A Foundation Build systematically reconstructs content to include specialist credentials, service detail, patient outcomes, and comparative positioning — making the practice machine-readable and citation-ready across all four engines.</p>
+        <p><strong>Fix 2 · Third-party citation density (critical).</strong> Competitors achieve placement partly through mentions in medical directories, review aggregators, and professional listings. A targeted authority program expands the practice's presence in the third-party sources these engines draw on, closing the citation gap that currently favours named rivals.</p>
+        <p><strong>Fix 3 · Specialist positioning (high priority).</strong> The practice is not surfaced for decision-intent queries ("who should I hire," "top recommended"). Building explicit specialist positioning and a service-specific content hierarchy signals to AI systems that it should be ranked for high-intent searches, not just broad category queries.</p>
 
         <h2>11 · Final recommendation</h2>
-        <p>The practice requires a comprehensive AI-visibility program. The depth of exclusion across four independent platforms indicates this is not a quick-fix ranking issue — it reflects gaps in how the practice is structured, cited, and positioned for discovery by AI recommendation systems. A Foundation Build engagement addressing credential mapping, third-party authority integration, and content restructuring establishes the foundation; a Growth retainer then monitors performance across these four engines and adjusts as competitive activity and platform updates evolve.</p>
+        <p>The visibility gap reflects both on-site and off-site deficits. A <strong>Foundation Build</strong> is the appropriate entry point: it restructures the site to be AI-readable and establishes semantic clarity around credentials and specialties, preparing the practice to benefit from the authority-building work that follows. A <strong>Growth retainer</strong> then builds and sustains third-party citation density, working toward competitive parity with the rivals who currently dominate AI recommendation results.</p>
 
         <p class="note" style="margin-top:24px">AI visibility is measured through repeated prompt sampling and should be read directionally; month-to-month change can reflect optimisation work, competitor activity, or platform updates.</p>
       </div>
