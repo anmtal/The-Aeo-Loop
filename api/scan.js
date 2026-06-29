@@ -193,7 +193,7 @@ async function observeGrok(key, query) {
     const body = { model: "grok-3", messages: [{ role: "user", content: observeInstruction(query) }], max_tokens: 700, temperature: 0.3 };
     if (withSearch) body.search_parameters = { mode: "auto" };
     const r = await fetchT("https://api.x.ai/v1/chat/completions",
-      { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` }, body: JSON.stringify(body) }, withSearch ? 12000 : 8000);
+      { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` }, body: JSON.stringify(body) }, withSearch ? 18000 : 12000);
     if (!r.ok) throw new Error("grok " + r.status);
     return (await r.json()).choices?.[0]?.message?.content || "";
   }
