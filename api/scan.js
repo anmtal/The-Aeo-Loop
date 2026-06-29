@@ -472,10 +472,11 @@ async function sendClientReceipt(payload) {
   const html =
     `<div style="font:15px/1.6 -apple-system,system-ui,sans-serif;color:#1a1a1a;max-width:520px">` +
     `<p>Hi ${esc(first)},</p>` +
-    `<p>Thanks for running ${esc(input.company)} through the scanner. I've got your results and I'm pulling the full report together now.</p>` +
-    `<p>I review every report myself before it goes out, so it won't arrive instantly. You'll have it within a day or two. It covers where you're showing up across ChatGPT, Gemini, Grok and Claude, who's getting recommended in your place, and the main reasons behind it.</p>` +
-    `<p>If anything comes up before then, just reply to this email. It comes straight to me.</p>` +
+    `<p>Thanks for running ${esc(input.company)} through the scanner. Your results are in, and I'm putting your full Gap Report together now.</p>` +
+    `<p>Quick note on how this works: I review every report personally before it reaches you, so it lands within 24–48 hours — not an instant auto-generated PDF. It'll show where you stand across ChatGPT, Gemini, Grok and Claude, who's being recommended instead, and the specific gaps holding you back.</p>` +
+    `<p>Sit tight — it's coming.</p>` +
     `<p style="margin-top:18px">Anmol<br><span style="color:#666">The AEO Loop</span></p>` +
+    `<p style="color:#666;font-size:13px">P.S. Questions in the meantime? Just reply — it comes straight to me.</p>` +
     `</div>`;
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -484,7 +485,7 @@ async function sendClientReceipt(payload) {
       from: FROM_EMAIL,
       to: [input.email],
       reply_to: FOUNDER_EMAIL,
-      subject: "Your AEO report is on the way",
+      subject: "Your Gap Report is on its way",
       html,
     }),
   });
