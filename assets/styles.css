@@ -452,7 +452,7 @@ textarea:-webkit-autofill:focus {
 .founder { display: grid; grid-template-columns: 300px 1fr; gap: clamp(28px, 4vw, 56px); align-items: start; }
 @media (max-width: 760px) { .founder { grid-template-columns: 1fr; } }
 .founder__card { background: var(--ink-soft); border: 1px solid var(--ink-line); border-radius: var(--r); padding: 28px 24px; text-align: center; box-shadow: var(--glow); }
-.founder__avatar { width: 132px; height: 132px; margin: 0 auto 16px; border-radius: 50%; display: block; object-fit: cover; object-position: center 22%; border: 2px solid var(--accent-br); background: radial-gradient(circle at 30% 25%, var(--accent-br), var(--accent-deep)); box-shadow: 0 0 30px -6px rgba(26,214,160,.6); }
+.founder__avatar { width: 132px; height: 132px; margin: 0 auto 16px; border-radius: 50%; display: block; object-fit: cover; object-position: center 38%; border: 2px solid var(--accent-br); background: radial-gradient(circle at 30% 25%, var(--accent-br), var(--accent-deep)); box-shadow: 0 0 30px -6px rgba(26,214,160,.6); }
 .founder__name { font-family: var(--display); font-weight: 800; font-size: 1.5rem; color: var(--on-ink); }
 .founder__role { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-br); margin-top: 5px; }
 .founder__card .btn { margin-top: 18px; }
@@ -461,7 +461,7 @@ textarea:-webkit-autofill:focus {
 
 .founder-strip { display: flex; align-items: center; gap: 20px; background: var(--card); border: 1px solid var(--card-line); border-radius: var(--r); padding: 22px 26px; max-width: 760px; box-shadow: var(--shadow); }
 @media (max-width: 560px) { .founder-strip { flex-direction: column; text-align: center; } }
-.founder-strip__avatar { flex: none; width: 58px; height: 58px; border-radius: 50%; display: block; object-fit: cover; object-position: center 22%; background: radial-gradient(circle at 30% 25%, var(--accent-br), var(--accent-deep)); box-shadow: 0 0 22px -6px rgba(26,214,160,.55); }
+.founder-strip__avatar { flex: none; width: 58px; height: 58px; border-radius: 50%; display: block; object-fit: cover; object-position: center 38%; background: radial-gradient(circle at 30% 25%, var(--accent-br), var(--accent-deep)); box-shadow: 0 0 22px -6px rgba(26,214,160,.55); }
 .founder-strip p { font-size: 15.5px; color: var(--text-2); line-height: 1.6; margin: 0; }
 .founder-strip b { color: var(--text); }
 
