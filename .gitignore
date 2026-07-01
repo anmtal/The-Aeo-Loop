@@ -22,3 +22,12 @@ Thumbs.db
 
 # Unrelated local project that lives inside this folder
 arbitrage-bot/
+
+# local deep-scanner client data
+local-scanner/snapshots/
+local-scanner/reports/
+
+# internal — not part of the deployed site (client docs, payment links, tooling)
+Working Folder/
+Working/
+local-scanner/

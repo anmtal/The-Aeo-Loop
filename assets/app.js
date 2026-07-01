@@ -44,7 +44,6 @@
     recommended: { label: "Recommended", cls: "rec",  band: [75, 90] },
     mentioned:   { label: "Mentioned",   cls: "men",  band: [45, 60] },
     cited:       { label: "Cited",       cls: "cit",  band: [38, 50] },
-    competitor:  { label: "Competitor Surfaced", cls: "comp", band: [18, 30] },
     excluded:    { label: "Excluded",    cls: "exc",  band: [5, 18] }
   };
 
@@ -74,8 +73,8 @@
       case "recommended": return "Named with a positive recommendation in direct response to the query.";
       case "mentioned":   return company + " appears as a passing list item, with no endorsement.";
       case "cited":       return "The website is referenced as a source, but not recommended to hire.";
-      case "competitor":  return comp + " is recommended in the position " + company + " should hold.";
-      default:            return company + " is not mentioned in any form for this query.";
+      default:            return comp ? comp + " and other competitors are recommended; " + company + " does not appear."
+                                      : company + " is not mentioned in any form for this query.";
     }
   }
 
@@ -87,19 +86,19 @@
   /* Build a realistic, deterministic demo result set for a business */
   function demoResults(input) {
     var rand = rng(seedFrom((input.company || "acme") + (input.area || "") + (input.city || "")));
-    var picks = ["excluded", "competitor", "mentioned", "cited", "recommended"];
+    var picks = ["excluded", "mentioned", "cited", "recommended"];
     var results = ENGINES.map(function (eng) {
       // weight toward the painful states for a business with no AEO work yet
       var roll = rand();
-      var state = roll < 0.34 ? "excluded" : roll < 0.6 ? "competitor" : roll < 0.78 ? "mentioned" : roll < 0.9 ? "cited" : "recommended";
+      var state = roll < 0.6 ? "excluded" : roll < 0.78 ? "mentioned" : roll < 0.9 ? "cited" : "recommended";
       var comp = COMPETITORS[Math.floor(rand() * COMPETITORS.length)];
-      var gapKey = state === "competitor" ? "dominance" : state === "excluded" ? (rand() < .5 ? "citations" : "thin") : state === "cited" ? "thin" : state === "mentioned" ? "reviews" : "entity";
+      var gapKey = state === "excluded" ? (rand() < .5 ? "citations" : "dominance") : state === "cited" ? "thin" : state === "mentioned" ? "reviews" : "entity";
       return {
         engine: eng.key, name: eng.name, vendor: eng.vendor, tag: eng.tag,
         classification: state,
         score: bandScore(state, rand),
         reason: reasonFor(state, input.company || "Your business", comp),
-        competitor: (state === "competitor") ? comp : null,
+        competitor: (state === "excluded") ? comp : null,
         gap: gapKey,
         gapLabel: GAPS[gapKey].label,
         gapFix: GAPS[gapKey].fix,

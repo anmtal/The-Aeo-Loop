@@ -23,7 +23,7 @@ Marketing site + free **AI Visibility Scanner** for The AEO Loop, a managed Answ
 
 ## How the scanner works
 
-The form on `/scanner` POSTs to `/api/scan`. The function fires a buying-intent prompt at four engines — **OpenAI (ChatGPT), Google (Gemini), xAI (Grok), Anthropic (Claude)** — classifies each result into one of five states (Recommended / Mentioned / Cited / Excluded / Competitor Surfaced), scores 0–100, and assigns a gap category. The scanner returns **scores and verdicts only**; the full 11-section Gap Report is produced separately by the founder-reviewed 3-pass process and emailed in 24–48h.
+The form on `/scanner` POSTs to `/api/scan`. The function fires a buying-intent prompt at four engines — **OpenAI (ChatGPT), Google (Gemini), xAI (Grok), Anthropic (Claude)** — classifies each result into one of four states (Recommended / Mentioned / Cited / Excluded), scores 0–100, and assigns a gap category. The scanner returns **scores and verdicts only**; the full 11-section Gap Report is produced separately by the founder-reviewed 3-pass process and emailed in 24–48h.
 
 **Demo mode:** if an engine's API key is not set, that engine falls back to a clearly-labelled deterministic demo result. The site works the moment it deploys and goes fully live once you add keys — no code changes required.
 

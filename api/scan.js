@@ -31,7 +31,6 @@ const STATE_BANDS = {
   recommended: [75, 90],
   mentioned:   [45, 60],
   cited:       [38, 50],
-  competitor:  [18, 30],
   excluded:    [5, 18],
 };
 
@@ -75,8 +74,7 @@ function classifierPrompt(input, engineName) {
     `- "recommended": named and positively recommended / positioned as a good choice.`,
     `- "mentioned": the name appears but without a clear recommendation.`,
     `- "cited": its website/content is referenced as a source, but it is not recommended to hire.`,
-    `- "competitor": the business does NOT appear, but one or more named competitors in the same category DO appear in recommended positions.`,
-    `- "excluded": the business does not appear at all, though the answers are on-topic.`,
+    `- "excluded": the business does not appear at all. This INCLUDES the common case where the answers are on-topic and named competitors ARE recommended but the business under test is absent — that is still "excluded".`,
     ``,
     `Also assign ONE gap category (local, thin, citations, reviews, entity, dominance) that best explains the result, and name the single most prominent competitor actually named in the answers (or null).`,
     ``,
@@ -88,7 +86,7 @@ function classifierPrompt(input, engineName) {
 // value (the midpoint of its band). A per-engine score is simply that value for
 // the engine's classification — so it derives entirely from the real verdict
 // and is stable on re-scan. No randomness.
-const STATE_SCORE = { recommended: 82, mentioned: 52, cited: 44, competitor: 24, excluded: 11 };
+const STATE_SCORE = { recommended: 82, mentioned: 52, cited: 44, excluded: 11 };
 function scoreFor(state) { return STATE_SCORE[state] != null ? STATE_SCORE[state] : STATE_SCORE.excluded; }
 
 function esc(s) {
@@ -121,16 +119,17 @@ function hashStr(s) {
   return h >>> 0;
 }
 function demoEngine(engine, input, i) {
-  const order = ["excluded", "competitor", "mentioned", "cited", "recommended"];
+  const order = ["excluded", "mentioned", "cited", "recommended"];
   const seed = hashStr((input.company || "") + "|" + (input.area || "") + "|" + (input.city || "") + "|" + engine.key);
   const state = order[(seed + i) % order.length];
   const comps = ["Meridian", "Brightpath", "Calderwood", "Northgate"];
-  const comp = state === "competitor" ? comps[(seed >>> 3) % comps.length] : null;
-  const gapKey = state === "competitor" ? "dominance" : state === "excluded" ? "citations" : state === "cited" ? "thin" : state === "mentioned" ? "reviews" : "entity";
+  // an excluded business usually has rivals named in its place — surface one
+  const comp = state === "excluded" ? comps[(seed >>> 3) % comps.length] : null;
+  const gapKey = state === "excluded" ? (comp ? "dominance" : "citations") : state === "cited" ? "thin" : state === "mentioned" ? "reviews" : "entity";
   const reason = state === "recommended" ? "Named with a positive recommendation in direct response to the query."
     : state === "mentioned" ? `${input.company} appears as a passing list item, with no endorsement.`
     : state === "cited" ? "The website is referenced as a source, but not recommended to hire."
-    : state === "competitor" ? `${comp} is recommended in the position ${input.company} should hold.`
+    : comp ? `${comp} and other competitors are recommended; ${input.company} does not appear.`
     : `${input.company} is not mentioned in any form for this query.`;
   return {
     engine: engine.key, name: engine.name, vendor: engine.vendor, tag: engine.tag,
@@ -269,7 +268,6 @@ const STATE_LABELS = {
   recommended: "Recommended",
   mentioned:   "Mentioned",
   cited:       "Cited",
-  competitor:  "Competitor",
   excluded:    "Excluded",
 };
 
