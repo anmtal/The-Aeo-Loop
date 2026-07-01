@@ -443,9 +443,9 @@ async function emailGapReport(html, payload) {
   try {
     const mod = require("html-to-docx");
     const htmlToDocx = mod.default || mod;
-    const LOGO = require("./_logo");
+    const GLYPH = require("./_glyph");
     const header =
-      `<p><img src="data:image/png;base64,${LOGO}" alt="The AEO Loop" width="190" /></p>` +
+      `<p><img src="data:image/png;base64,${GLYPH}" alt="The AEO Loop" width="48" height="30" style="vertical-align:middle" /> <span style="font-size:22px;font-weight:bold;color:#1A1A2E;vertical-align:middle">The AEO Loop</span></p>` +
       `<h1 style="color:#10A87E">AI Visibility Gap Report</h1>` +
       (input.company ? `<p>Prepared for <strong>${esc(input.company)}</strong> &middot; ${esc(input.area)}, ${esc(input.city)}</p>` : "") +
       `<p style="color:#666">Prepared by The AEO Loop &middot; theaeoloop.com</p><hr/>`;
