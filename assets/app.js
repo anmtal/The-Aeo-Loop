@@ -158,12 +158,13 @@
   function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
 
   /* recommend a next step from the scan summary (shown on the results gate) */
-  function recommendFor(s) {
+  function recommendFor(s, mode) {
     var rec;
     if (s.overall < 30) rec = "Based on your results, we'd start with a one-time <b>Foundation Build</b> — your priority pages need the structural and entity fixes that get engines to cite and recommend you.";
     else if (s.overall < 58) rec = "Based on your results, the <b>Growth</b> retainer is the fit — you're showing up but not yet recommended, and the ongoing loop is what closes that gap.";
     else rec = "You're already surfacing across engines — the <b>Growth</b> retainer protects and compounds that as the models shift.";
-    if (s.topCompetitor) rec = "<b>" + escapeHtml(s.topCompetitor) + "</b> is being recommended where you should be. " + rec;
+    // never present a fabricated demo competitor as a real rival
+    if (s.topCompetitor && mode !== "demo") rec = "<b>" + escapeHtml(s.topCompetitor) + "</b> is being recommended where you should be. " + rec;
     return rec;
   }
 
@@ -175,7 +176,6 @@
     var resultsEl = document.querySelector("[data-results]");
     var cardsEl = resultsEl ? resultsEl.querySelector("[data-cards]") : null;
     var submitBtn = form.querySelector("[data-submit]");
-    var demoFlag = document.querySelector("[data-demo-flag]");
 
     var rules = {
       company: function (v) { return v.trim().length >= 2 || "Enter your company name."; },
@@ -304,7 +304,25 @@
 
       // dynamic next-step recommendation
       var recoEl = resultsEl.querySelector("[data-reco]");
-      if (recoEl) { recoEl.innerHTML = recommendFor(s); recoEl.style.display = "block"; }
+      if (recoEl) { recoEl.innerHTML = recommendFor(s, data.mode); recoEl.style.display = "block"; }
+
+      // honest gate: a demo fallback captures no lead and emails no report —
+      // never leave the "your report is on its way" promise up for one
+      var gate = resultsEl.querySelector(".gate");
+      if (gate) {
+        var gh = gate.querySelector("h3"), gp = gate.querySelector("p");
+        if (gh && !gate.getAttribute("data-orig-h")) {
+          gate.setAttribute("data-orig-h", gh.textContent);
+          if (gp) gate.setAttribute("data-orig-p", gp.textContent);
+        }
+        if (data.mode === "demo") {
+          if (gh) gh.textContent = "Demo results — no report will be emailed.";
+          if (gp) gp.textContent = "We couldn't reach the live scan service, so these verdicts are illustrative only. Please try again in a few minutes — a real scan takes about a minute, and the full founder-reviewed Gap Report follows within 24–48 hours.";
+        } else {
+          if (gh) gh.textContent = gate.getAttribute("data-orig-h") || gh.textContent;
+          if (gp) gp.textContent = gate.getAttribute("data-orig-p") || gp.textContent;
+        }
+      }
 
       var pre = document.querySelector("[data-pre]");
       if (pre) pre.style.display = "none";

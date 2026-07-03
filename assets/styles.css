@@ -235,14 +235,12 @@ p { margin: 0; }
 .badge--rec  { color: #04130E; background: var(--v-rec); }
 .badge--men  { color: #1f1402; background: var(--v-men); }
 .badge--cit  { color: #03121f; background: var(--v-cit); }
-.badge--comp { color: #1f0c04; background: var(--v-comp); }
 .badge--exc  { color: #1f0504; background: var(--v-exc); }
 /* outline variant for legends */
 .badge.is-line { background: transparent; }
 .badge.is-line.badge--rec  { color: var(--v-rec);  border-color: var(--v-rec); }
 .badge.is-line.badge--men  { color: var(--v-men);  border-color: var(--v-men); }
 .badge.is-line.badge--cit  { color: var(--v-cit);  border-color: var(--v-cit); }
-.badge.is-line.badge--comp { color: var(--v-comp); border-color: var(--v-comp); }
 .badge.is-line.badge--exc  { color: var(--v-exc);  border-color: var(--v-exc); }
 
 /* ---------- generic grid + cards ---------- */

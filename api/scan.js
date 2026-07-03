@@ -277,7 +277,7 @@ async function saveLead(payload) {
   const { input, results, summary } = payload;
   const byEngine = {};
   results.forEach((r) => {
-    byEngine[r.engine] = `${STATE_LABELS[r.classification] || r.classification} · ${r.score}`;
+    byEngine[r.engine] = `${STATE_LABELS[r.classification] || r.classification} · ${r.score}${r.live ? "" : " (demo)"}`;
   });
   const row = {
     secret: process.env.SHEET_WEBHOOK_SECRET || "",
@@ -347,17 +347,21 @@ function summarise(results, input) {
   const recommended = results.filter((r) => r.classification === "recommended").length;
   const excluded = results.filter((r) => r.classification === "excluded").length;
   const comps = {};
-  results.forEach((r) => { if (r.competitor) comps[r.competitor] = (comps[r.competitor] || 0) + 1; });
+  // only LIVE engines may nominate competitors — demo fallbacks use fabricated
+  // names that must never surface as "who's beating you"
+  results.forEach((r) => { if (r.live && r.competitor) comps[r.competitor] = (comps[r.competitor] || 0) + 1; });
   const topCompetitor = Object.keys(comps).sort((a, b) => comps[b] - comps[a])[0] || null;
   const gaps = {};
   results.forEach((r) => { gaps[r.gapLabel] = (gaps[r.gapLabel] || 0) + 1; });
   const primaryGap = Object.keys(gaps).sort((a, b) => gaps[b] - gaps[a])[0] || null;
-  const anyLive = results.some((r) => r.live);
+  const liveCount = results.filter((r) => r.live).length;
   return {
     input,
     results,
     summary: { overall, recommended, excluded, topCompetitor, topCompetitorCount: topCompetitor ? comps[topCompetitor] : 0, primaryGap },
-    mode: anyLive ? "live" : "demo",
+    mode: liveCount > 0 ? "live" : "demo",
+    liveCount,
+    demoCount: results.length - liveCount,
   };
 }
 
@@ -373,8 +377,11 @@ function stripFence(s) {
 function gapReportPrompt(payload) {
   const { input, results, summary } = payload;
   const lines = results
-    .map((r) => `- ${r.name} (${r.vendor}): ${r.classification.toUpperCase()} — ${r.score}/100. ${r.reason}${r.competitor ? ` Competitor surfaced: ${r.competitor}.` : ""} Gap: ${r.gapLabel}.`)
+    .map((r) => `- ${r.name} (${r.vendor})${r.live ? "" : " [ENGINE UNAVAILABLE — illustrative placeholder verdict, NOT live data]"}: ${r.classification.toUpperCase()} — ${r.score}/100. ${r.reason}${r.live && r.competitor ? ` Competitor surfaced: ${r.competitor}.` : ""} Gap: ${r.gapLabel}.`)
     .join("\n");
+  const demoNote = payload.demoCount > 0
+    ? `\nIMPORTANT: ${payload.demoCount} of ${results.length} engines could not be reached live; their verdicts above are placeholders. State this limitation plainly in the Executive Summary and do not draw conclusions from placeholder verdicts.`
+    : "";
   return [
     `You are an expert AI visibility strategist writing a client-facing "Gap Report".`,
     ``,
@@ -391,20 +398,22 @@ function gapReportPrompt(payload) {
     `Overall visibility: ${summary.overall}/100. Recommended on ${summary.recommended} engine(s), Excluded on ${summary.excluded}.`,
     `Most surfaced competitor: ${summary.topCompetitor || "none"}. Primary gap: ${summary.primaryGap || "n/a"}.`,
     `Per-engine results:`,
-    lines,
+    lines + demoNote,
     ``,
     `Write a professional 11-section Gap Report in clean semantic HTML — use <h2>, <h3>, <p>, <ul>, <table>; NO <html>/<head>/<body> wrapper, NO markdown, NO inline styles, NO code fences.`,
     `Sections in order: 1) Executive Summary 2) Inputs Used 3) AI Recommendation Coverage 4) Citation Coverage 5) Competitor Coverage 6) Authority Gaps 7) Structure Gaps 8) Prompt Intent Matrix 9) Off-site Authority Snapshot 10) Priority Fixes 11) Final Recommendation.`,
     ``,
     `CONFIDENTIALITY (critical): this is a diagnostic and strategic summary, NOT an implementation guide. Do NOT include copy-ready page drafts, step-by-step instructions, schema or JSON-LD code, the scanning prompt library, tool names, or platform-specific settings. Keep everything at the strategic / categorical level.`,
     `PRIORITY FIXES guardrail: each fix names the CATEGORY of work and why it matters — never the method, tool, sequence, or output format. Correct example: "Your service pages lack the structured, extractable content engines need to cite you as a recommendation source. A paid Foundation Build addresses this directly."`,
-    `Final Recommendation must route the client toward the Foundation Build package or Growth retainer, and include this caveat verbatim: "AI visibility is measured through repeated prompt sampling and should be read directionally; month-to-month change can reflect optimisation work, competitor activity, or platform updates."`,
+    `Final Recommendation must route the client toward the Foundation Build package or Growth retainer, and include this caveat verbatim: "AI visibility is measured by sampling live engine answers across multiple buying-intent prompts and should be read directionally; month-to-month change can reflect optimisation work, competitor activity, or platform updates."`,
     `Tone: confident, senior, concise. Keep each section tight (2–4 sentences or a short list); the whole report should read in a few minutes.`,
   ].join("\n");
 }
 
 async function callAnthropicReport(key, prompt) {
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
+  // hard timeout: this runs inside waitUntil under the same 60s function cap,
+  // so an unbounded hang would silently kill the report AND the client receipt.
+  const r = await fetchT("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01" },
     body: JSON.stringify({
@@ -415,7 +424,7 @@ async function callAnthropicReport(key, prompt) {
       max_tokens: 3000,
       messages: [{ role: "user", content: prompt }],
     }),
-  });
+  }, 35000);
   if (!r.ok) throw new Error("anthropic-report " + r.status);
   const j = await r.json();
   return (j.content || []).map((b) => b.text || "").join("");
@@ -427,7 +436,9 @@ async function emailGapReport(html, payload) {
   const { input, summary } = payload;
   const demoWarn = payload.mode === "demo"
     ? `<p style="font:14px/1.5 system-ui,sans-serif;color:#9a3412;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;margin:0 0 12px"><strong>⚠ Demo mode:</strong> the engines were unavailable for this scan, so these verdicts are illustrative — not live. Do not send this report to the client as-is.</p>`
-    : "";
+    : (payload.demoCount > 0
+      ? `<p style="font:14px/1.5 system-ui,sans-serif;color:#9a3412;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;margin:0 0 12px"><strong>⚠ Partial demo:</strong> ${payload.demoCount} of ${payload.results.length} engines could not be reached live — their verdicts are placeholders (marked in the report). Verify before sending to the client.</p>`
+      : "");
   const intro =
     demoWarn +
     `<p style="font:14px/1.5 system-ui,sans-serif;color:#444">` +
@@ -480,8 +491,35 @@ async function generateAndEmailGapReport(payload) {
   const akey = process.env.ANTHROPIC_API_KEY;
   if (!akey || !process.env.RESEND_API_KEY) return; // not configured yet — skip cleanly
   const html = stripFence(await callAnthropicReport(akey, gapReportPrompt(payload)));
-  if (!html) return;
+  if (!html) throw new Error("report generation returned empty");
   await emailGapReport(html, payload);
+}
+
+/* Failure alert: if the Gap Report can't be generated/emailed, the founder must
+ * know — the client receipt promises a report in 24–48h, and the founder draft
+ * email is the only trigger to write one. Best-effort; never throws. */
+async function alertFounderReportFailed(payload, err) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return;
+  const { input, summary } = payload;
+  try {
+    const r = await fetchT("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: [FOUNDER_EMAIL],
+        subject: `⚠ REPORT FAILED — ${input.company} (${summary.overall}/100)`,
+        html: `<p style="font:14px/1.5 system-ui,sans-serif;color:#1a1a1a">Gap Report generation failed for ` +
+          `<strong>${esc(input.company)}</strong> — ${esc(input.name)} &lt;${esc(input.email)}&gt; · ${esc(input.area)} · ${esc(input.city)}.<br>` +
+          `Overall ${summary.overall}/100 · mode: ${esc(payload.mode)} · error: ${esc(String((err && err.message) || err)).slice(0, 200)}<br><br>` +
+          `The lead was told to expect a report within 24–48h — generate one manually (the lead row is in the Sheet).</p>`,
+      }),
+    }, 10000);
+    if (!r.ok) throw new Error("resend " + r.status);
+  } catch (e) {
+    console.error("failure-alert email also failed:", (e && e.message) || e);
+  }
 }
 
 /* Automatic receipt to the client at scan time. Sets expectations that the
@@ -619,8 +657,19 @@ module.exports = async function handler(req, res) {
   res.status(200).json(payload);
 
   waitUntil((async () => {
-    try { await sendClientReceipt(payload); } catch (e) { console.error("client-receipt failed:", (e && e.message) || e); }
+    // Receipt only for scans with at least one live engine — a full-demo scan
+    // produced nothing worth promising a report about. It depends on nothing
+    // else, so it runs in parallel rather than waiting ~35s behind the report
+    // chain (the whole block shares the 60s function cap).
+    const receipt = payload.mode === "live"
+      ? sendClientReceipt(payload).catch((e) => console.error("client-receipt failed:", (e && e.message) || e))
+      : Promise.resolve();
+    // 1) capture the lead first — never lose it to a later failure
     try { await saveLead(payload); } catch (e) { console.error("saveLead failed:", (e && e.message) || e); }
-    try { await generateAndEmailGapReport(payload); } catch (e) { console.error("gap-report failed:", (e && e.message) || e); }
+    // 2) generate + email the founder draft; on failure ALERT the founder,
+    //    because the receipt promises the lead a report within 24-48h
+    try { await generateAndEmailGapReport(payload); }
+    catch (e) { console.error("gap-report failed:", (e && e.message) || e); await alertFounderReportFailed(payload, e); }
+    await receipt;
   })());
 };
