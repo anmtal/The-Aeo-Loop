@@ -160,9 +160,9 @@
   /* recommend a next step from the scan summary (shown on the results gate) */
   function recommendFor(s, mode) {
     var rec;
-    if (s.overall < 30) rec = "Based on your results, we'd start with a one-time <b>Foundation Build</b> — your priority pages need the structural and entity fixes that get engines to cite and recommend you.";
+    if (s.overall < 30) rec = "Based on your results, we'd start with a one-time <b>Foundation Build</b> — your priority pages need the structural and entity fixes that get engines to cite and recommend you. From there, the <b>Momentum</b> retainer keeps it improving.";
     else if (s.overall < 58) rec = "Based on your results, the <b>Growth</b> retainer is the fit — you're showing up but not yet recommended, and the ongoing loop is what closes that gap.";
-    else rec = "You're already surfacing across engines — the <b>Growth</b> retainer protects and compounds that as the models shift.";
+    else rec = "You're already surfacing across engines — the <b>Momentum</b> retainer protects and compounds that at a focused scope as the models shift.";
     // never present a fabricated demo competitor as a real rival
     if (s.topCompetitor && mode !== "demo") rec = "<b>" + escapeHtml(s.topCompetitor) + "</b> is being recommended where you should be. " + rec;
     return rec;

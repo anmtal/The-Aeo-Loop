@@ -405,7 +405,7 @@ function gapReportPrompt(payload) {
     ``,
     `CONFIDENTIALITY (critical): this is a diagnostic and strategic summary, NOT an implementation guide. Do NOT include copy-ready page drafts, step-by-step instructions, schema or JSON-LD code, the scanning prompt library, tool names, or platform-specific settings. Keep everything at the strategic / categorical level.`,
     `PRIORITY FIXES guardrail: each fix names the CATEGORY of work and why it matters — never the method, tool, sequence, or output format. Correct example: "Your service pages lack the structured, extractable content engines need to cite you as a recommendation source. A paid Foundation Build addresses this directly."`,
-    `Final Recommendation must route the client toward the Foundation Build package or Growth retainer, and include this caveat verbatim: "AI visibility is measured by sampling live engine answers across multiple buying-intent prompts and should be read directionally; month-to-month change can reflect optimisation work, competitor activity, or platform updates."`,
+    `Final Recommendation must route the client toward the Foundation Build package or an ongoing retainer (Momentum for maintaining an established position, Growth for closing gaps), and include this caveat verbatim: "AI visibility is measured by sampling live engine answers across multiple buying-intent prompts and should be read directionally; month-to-month change can reflect optimisation work, competitor activity, or platform updates."`,
     `Tone: confident, senior, concise. Keep each section tight (2–4 sentences or a short list); the whole report should read in a few minutes.`,
   ].join("\n");
 }

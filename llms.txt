@@ -1,0 +1,19 @@
+# The AEO Loop
+
+> A managed AI recommendation and visibility service for high-ticket, trust-driven businesses (healthcare and clinics, law firms, finance, professional services). The AEO Loop measures how AI answer engines — ChatGPT, Gemini, Grok, and Claude — actually answer real buying-intent questions about a business, classifies its presence into four states (Recommended, Mentioned, Cited, Excluded), and runs a continuous observe → diagnose → optimize → distribute → verify loop to improve how often the business is the recommendation.
+
+Key facts: results are measured from live engine answers and read directionally (no ranking guarantees). The free scanner runs three buying-intent prompts across four engines and returns per-engine verdicts plus a founder-reviewed Gap Report within 24–48 hours. Paid work is a one-time Foundation Build ($1,999) and ongoing retainers (Momentum $2,499/mo, Growth $3,499/mo, Authority $5,999/mo; annual billing at 10% off). Contact: contact@theaeoloop.com.
+
+## Core pages
+
+- [What is AEO?](https://theaeoloop.com/what-is-aeo): plain-language explanation of Answer Engine Optimization and why AI assistants now shape buying decisions
+- [How it works](https://theaeoloop.com/method): the six-stage loop — observe, diagnose, optimize, distribute, verify, repeat — and the four-state classification method
+- [Free AI Visibility Scanner](https://theaeoloop.com/scanner): run real prompts against four engines and see who AI recommends
+- [Sample Gap Report](https://theaeoloop.com/sample-report): a real, redacted client report showing exactly what the diagnosis looks like
+- [Pricing](https://theaeoloop.com/pricing): Foundation Build and the three retainers, with a full scope comparison
+- [Industries](https://theaeoloop.com/industries): healthcare, legal, finance, SaaS, professional services, high-value local services
+
+## About
+
+- [About The AEO Loop](https://theaeoloop.com/about): who runs it and the thinking behind the method
+- [Contact](https://theaeoloop.com/contact): book a 20-minute call or send a message
