@@ -365,6 +365,112 @@ function summarise(results, input) {
   };
 }
 
+/* ---- EVIDENCE: cheap, hard-timeboxed checks of the lead's actual site and
+ * public signals. Kicked off IN PARALLEL with the engine scan (so it adds no
+ * wall-clock) and fed into the Gap Report prompt, so the Structure / Off-site
+ * sections are grounded in fetched facts instead of guessed. Every field
+ * degrades to "not checked" — never blocks or fails the scan. ---- */
+const EVIDENCE_UA = "Mozilla/5.0 (compatible; AEOLoopScanner/1.0; +https://theaeoloop.com)";
+
+function evStripTags(html) {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function evidenceSite(website) {
+  const out = {};
+  let url = String(website || "").trim();
+  if (!url) return out;
+  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+  const r = await fetchT(url, { headers: { "User-Agent": EVIDENCE_UA }, redirect: "follow" }, 8000);
+  if (!r.ok) return out;
+  const html = (await r.text()).slice(0, 900000);
+  out.https = String(r.url || url).toLowerCase().startsWith("https") ? "yes" : "no";
+  // schema.org: JSON-LD @type values + microdata itemtype
+  const types = new Set();
+  (html.match(/<script[^>]*application\/ld\+json[^>]*>[\s\S]*?<\/script>/gi) || []).forEach((b) => {
+    (b.match(/"@type"\s*:\s*"([^"]+)"/g) || []).forEach((m) => {
+      const t = m.match(/"@type"\s*:\s*"([^"]+)"/); if (t) types.add(t[1]);
+    });
+  });
+  (html.match(/itemtype="https?:\/\/schema\.org\/([A-Za-z]+)"/gi) || []).forEach((m) => {
+    const t = m.match(/schema\.org\/([A-Za-z]+)/i); if (t) types.add(t[1]);
+  });
+  out.schemaTypes = types.size ? Array.from(types).slice(0, 12).join(", ") : "none detected";
+  out.wordCount = evStripTags(html).split(/\s+/).length;
+  // link/keyword detection over anchors (same heuristics as the local enricher)
+  const anchors = (html.match(/<a\s[^>]*href="[^"]*"[^>]*>[\s\S]*?<\/a>/gi) || []).join(" ").toLowerCase();
+  const has = (...kw) => (kw.some((k) => anchors.includes(k)) ? "yes" : "no");
+  out.faqPage = /faqpage/i.test(out.schemaTypes) ? "yes" : has("faq", "frequently asked");
+  out.teamBios = has("team", "providers", "attorneys", "doctors", "physicians", "surgeons", "our staff", "meet the", "meet-the");
+  out.aboutPage = has("about");
+  out.blog = has("blog", "/news", "articles", "insights");
+  return out;
+}
+
+async function evidencePlaces(input) {
+  const key = process.env.GOOGLE_PLACES_API_KEY;
+  if (!key) return {};
+  const out = {};
+  const q = encodeURIComponent(`${input.company} ${input.city}`);
+  const s = await fetchT(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${q}&key=${key}`, {}, 6000);
+  const sj = await s.json();
+  const pid = sj.results && sj.results[0] && sj.results[0].place_id;
+  if (!pid) return { gbp: "no listing found for this name+city" };
+  const d = await fetchT(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${pid}&fields=rating,user_ratings_total,website,formatted_phone_number,opening_hours&key=${key}`, {}, 6000);
+  const res = (await d.json()).result || {};
+  if (res.rating != null) out.googleRating = res.rating;
+  if (res.user_ratings_total != null) out.googleReviews = res.user_ratings_total;
+  const filled = ["website", "formatted_phone_number", "opening_hours"].filter((k) => res[k]).length;
+  out.gbp = filled === 3 ? "complete" : filled ? "partial" : "minimal";
+  return out;
+}
+
+async function evidenceKnowledgeGraph(company) {
+  const out = {};
+  const nm = String(company || "").trim().toLowerCase();
+  if (!nm) return out;
+  const close = (a, b) => a.includes(b) || b.includes(a);
+  try {
+    const r = await fetchT("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&limit=5&search=" + encodeURIComponent(company), { headers: { "User-Agent": EVIDENCE_UA } }, 5000);
+    const hits = ((await r.json()).search || []).map((h) => String(h.label || "").toLowerCase());
+    out.wikidata = hits.some((h) => close(nm, h)) ? "yes" : "no";
+  } catch (_) {}
+  try {
+    const r = await fetchT("https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&srlimit=5&srsearch=" + encodeURIComponent(company), { headers: { "User-Agent": EVIDENCE_UA } }, 5000);
+    const hits = (((await r.json()).query || {}).search || []).map((h) => String(h.title || "").toLowerCase());
+    out.wikipedia = hits.some((h) => close(nm, h)) ? "yes" : "no";
+  } catch (_) {}
+  return out;
+}
+
+async function collectEvidence(input) {
+  const [site, places, kg] = await Promise.all([
+    evidenceSite(input.website).catch(() => ({})),
+    evidencePlaces(input).catch(() => ({})),
+    evidenceKnowledgeGraph(input.company).catch(() => ({})),
+  ]);
+  return Object.assign({}, site, places, kg);
+}
+
+function evidenceBlock(ev) {
+  ev = ev || {};
+  const v = (x, unit) => (x == null || x === "" ? "not checked" : String(x) + (unit || ""));
+  return [
+    `SITE & OFF-SITE EVIDENCE (fetched live at scan time; "not checked" = we did not verify it — treat as unknown, NOT as a gap):`,
+    `- Site reachable over HTTPS: ${v(ev.https)}`,
+    `- schema.org structured data on homepage: ${v(ev.schemaTypes)}`,
+    `- Homepage word count: ${v(ev.wordCount, " words")}`,
+    `- FAQ page/section: ${v(ev.faqPage)} · Team/provider bios: ${v(ev.teamBios)} · About page: ${v(ev.aboutPage)} · Blog/articles: ${v(ev.blog)}`,
+    `- Google reviews: ${v(ev.googleReviews)} (avg rating ${v(ev.googleRating)}) · Google Business Profile: ${v(ev.gbp)}`,
+    `- Knowledge graph: Wikidata entity ${v(ev.wikidata)} · Wikipedia page ${v(ev.wikipedia)}`,
+  ].join("\n");
+}
+
 /* ---- Gap Report: generate from scan data and email a draft to the founder.
  * Runs in the background (via waitUntil) so it never delays scan verdicts.
  * The report is a strategic diagnosis only — guardrails forbid implementation
@@ -400,8 +506,11 @@ function gapReportPrompt(payload) {
     `Per-engine results:`,
     lines + demoNote,
     ``,
+    evidenceBlock(payload.evidence),
+    ``,
     `Write a professional 11-section Gap Report in clean semantic HTML — use <h2>, <h3>, <p>, <ul>, <table>; NO <html>/<head>/<body> wrapper, NO markdown, NO inline styles, NO code fences.`,
     `Sections in order: 1) Executive Summary 2) Inputs Used 3) AI Recommendation Coverage 4) Citation Coverage 5) Competitor Coverage 6) Authority Gaps 7) Structure Gaps 8) Prompt Intent Matrix 9) Off-site Authority Snapshot 10) Priority Fixes 11) Final Recommendation.`,
+    `EVIDENCE RULES (critical): Structure Gaps must be built ONLY from the site evidence above (schema, word count, FAQ/bios/About/blog). Off-site Authority Snapshot and Authority Gaps must be built ONLY from the reviews/GBP/knowledge-graph evidence. Where a signal reads "not checked", write "undetermined — not verified in this scan" for that aspect; NEVER infer or guess an unverified signal, and never present "not checked" as a deficiency.`,
     ``,
     `CONFIDENTIALITY (critical): this is a diagnostic and strategic summary, NOT an implementation guide. Do NOT include copy-ready page drafts, step-by-step instructions, schema or JSON-LD code, the scanning prompt library, tool names, or platform-specific settings. Keep everything at the strategic / categorical level.`,
     `PRIORITY FIXES guardrail: each fix names the CATEGORY of work and why it matters — never the method, tool, sequence, or output format. Correct example: "Your service pages lack the structured, extractable content engines need to cite you as a recommendation source. A paid Foundation Build addresses this directly."`,
@@ -644,6 +753,10 @@ module.exports = async function handler(req, res) {
   // whether the business actually appears in the engine's answers.
   const prompts = PROMPT_TEMPLATES.map((t) => t(input.area, input.city));
 
+  // Evidence collection runs alongside the engine scan (the scan takes far
+  // longer), so grounding the Gap Report costs no extra wall-clock time.
+  const evidenceP = collectEvidence(input).catch(() => ({}));
+
   const results = await Promise.all(
     ENGINES.map((eng, i) => scanEngine(eng, input, prompts, i))
   );
@@ -666,10 +779,16 @@ module.exports = async function handler(req, res) {
       : Promise.resolve();
     // 1) capture the lead first — never lose it to a later failure
     try { await saveLead(payload); } catch (e) { console.error("saveLead failed:", (e && e.message) || e); }
-    // 2) generate + email the founder draft; on failure ALERT the founder,
-    //    because the receipt promises the lead a report within 24-48h
+    // 2) attach the site/off-site evidence (already collected in parallel with
+    //    the scan), then generate + email the founder draft; on failure ALERT
+    //    the founder, because the receipt promises the lead a report in 24-48h
+    try { payload.evidence = await evidenceP; } catch (_) { payload.evidence = {}; }
     try { await generateAndEmailGapReport(payload); }
     catch (e) { console.error("gap-report failed:", (e && e.message) || e); await alertFounderReportFailed(payload, e); }
     await receipt;
   })());
 };
+
+// exposed for local testing only (Vercel invokes the default export)
+module.exports.collectEvidence = collectEvidence;
+module.exports.evidenceBlock = evidenceBlock;
